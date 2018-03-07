@@ -1,10 +1,8 @@
 package org.jetbrains.kotlinconf.backend
 
-import org.jetbrains.kotlinconf.data.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
-import io.ktor.gson.*
 import io.ktor.http.*
 import io.ktor.pipeline.*
 import io.ktor.request.*
@@ -12,6 +10,8 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.experimental.channels.*
+import org.jetbrains.kotlinconf.data.*
+import org.jetbrains.kotlinconf.util.*
 import java.time.*
 import java.time.format.*
 import java.util.*
@@ -109,8 +109,6 @@ fun Routing.apiFavorite(database: Database, production: Boolean) {
     }
 }
 
-private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-
 /*
 GET http://localhost:8080/votes
 Accept: application/json
@@ -147,8 +145,8 @@ fun Routing.apiVote(database: Database, production: Boolean) {
 
             val session = sessionizeData?.allData?.sessions?.firstOrNull { it.id == sessionId } ?: return@post call.respond(HttpStatusCode.NotFound)
             val nowTime = simulatedTime(production)
-            val startVotesAt = LocalDateTime.parse(session.startsAt, dateFormat)
-            val endVotesAt = LocalDateTime.parse(session.endsAt, dateFormat).plusMinutes(15)
+            val startVotesAt = session.startsAt?.toLocalDateTime()
+            val endVotesAt = session.endsAt?.toLocalDateTime()?.plusMinutes(15)
             val votingPeriodStarted = if (startVotesAt != null) {
                 ZonedDateTime.of(startVotesAt, keynoteTimeZone).isBefore(nowTime)
             } else true
@@ -238,9 +236,13 @@ fun Routing.wsVotes(database: Database, production: Boolean) {
         val id = call.parameters["sessionId"] ?: fakeSessionId
         trackSession(id).openSubscription().use { subscription ->
             subscription.consumeEach {
-
-                outgoing.send(Frame.Text(gson.toJson(database.getVotesSummary(id))))
+                outgoing.send(Frame.Text(kjson.stringify(database.getVotesSummary(id))))
             }
         }
     }
 }
+
+private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+
+internal fun org.jetbrains.kotlinconf.util.Date.toLocalDateTime(format: DateTimeFormatter = dateFormat): LocalDateTime =
+        LocalDateTime.parse(apiDateFormat.format(this), format)

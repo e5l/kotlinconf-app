@@ -1,6 +1,6 @@
-package org.jetbrains.kotlinconf
+package org.jetbrains.kotlinconf.util
 
-import java.text.SimpleDateFormat
+import java.text.*
 import java.util.*
 import java.util.Calendar.*
 
@@ -26,16 +26,18 @@ actual class Date {
     actual fun getMinutes() = calendar[MINUTE]
     actual fun getTime(): Number = calendar.timeInMillis
 
-    override fun equals(other: Any?): Boolean = other is Date && other.calendar.time == calendar.time
+    override fun equals(other: Any?): Boolean = other is org.jetbrains.kotlinconf.util.Date && other.calendar.time == calendar.time
+
+    actual companion object
 }
 
-actual operator fun Date.compareTo(otherDate: Date): Int = date.compareTo(otherDate.date)
+actual operator fun org.jetbrains.kotlinconf.util.Date.compareTo(otherDate: org.jetbrains.kotlinconf.util.Date): Int = date.compareTo(otherDate.date)
 
 val apiDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
 val readableDateFormat = SimpleDateFormat("EEEE, MMMM d", Locale.getDefault())
 val readableTimeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
-actual fun parseDate(dateString: String): Date = Date(apiDateFormat.parse(dateString))
+actual fun parseDate(dateString: String): org.jetbrains.kotlinconf.util.Date = Date(apiDateFormat.parse(dateString))
 
-actual fun Date.toReadableDateString() = readableDateFormat.format(date)
-actual fun Date.toReadableTimeString() = readableTimeFormat.format(date)
+actual fun org.jetbrains.kotlinconf.util.Date.toReadableDateString(): String = readableDateFormat.format(date)
+actual fun org.jetbrains.kotlinconf.util.Date.toReadableTimeString(): String = readableTimeFormat.format(date)

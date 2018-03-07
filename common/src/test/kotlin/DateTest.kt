@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinconf
 
+import org.jetbrains.kotlinconf.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -11,6 +12,5 @@ class DateTest {
         assertEquals(24, date.getDate())
         assertEquals(13, date.getHours())
         assertEquals(31, date.getMinutes())
-
     }
 }

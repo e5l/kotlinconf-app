@@ -1,19 +1,18 @@
 package org.jetbrains.kotlinconf.backend
 
-import com.google.gson.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.content.*
 import io.ktor.features.*
-import io.ktor.gson.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.*
 import io.ktor.websocket.*
+import kotlinx.serialization.json.*
 
-val gson = GsonBuilder().setPrettyPrinting().serializeNulls().create()
+val kjson = JSON(nonstrict = true)
 
 fun Application.main() {
     val config = environment.config.config("service")
@@ -40,7 +39,7 @@ fun Application.main() {
     }
 
     install(ContentNegotiation) {
-        register(ContentType.Application.Json, GsonConverter(gson))
+        register(ContentType.Application.Json, SerialContentConverter(JSON(indented = true)))
     }
 
     install(CORS) {
