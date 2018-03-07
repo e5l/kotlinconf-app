@@ -1,20 +1,17 @@
 package org.jetbrains.kotlinconf.backend
 
 import com.github.salomonbrys.kotson.*
-import org.jetbrains.kotlinconf.data.*
 import io.ktor.application.*
 import io.ktor.client.*
-import io.ktor.client.backend.apache.*
-import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.experimental.*
-import java.net.*
-import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import org.jetbrains.kotlinconf.data.*
+import java.text.*
+import java.time.*
 import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.Date
+import java.util.concurrent.*
 
 val apiDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
 
@@ -50,9 +47,8 @@ fun Application.launchSyncJob() {
     launch(CommonPool) {
         while (true) {
             log.trace("Synchronizing to Sessionize…")
-            val client = HttpClient(ApacheBackend)
-            val response = client.call(URL(url)) {}
-            val text = response.readText()
+            val client = HttpClient(CIO)
+            val text = client.get<String>(url)
             var data = gson.fromJson<AllData>(text)
             data = data.copy(sessions = data.sessions?.plus(fakeVotingSession))
             log.trace("Finished loading data from Sessionize.")
