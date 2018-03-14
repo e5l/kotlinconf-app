@@ -5,6 +5,8 @@ include 'common'
 include 'common-jvm'
 include 'common-js'
 
+include 'ios'
+
 if (INCLUDE_ANDROID == "true") {
     include 'android', 'android:app'
 }
