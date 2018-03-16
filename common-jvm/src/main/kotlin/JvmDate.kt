@@ -1,6 +1,8 @@
 package org.jetbrains.kotlinconf
 
 import java.text.SimpleDateFormat
+import java.time.*
+import java.time.format.*
 import java.util.*
 import java.util.Calendar.*
 
@@ -39,3 +41,8 @@ actual fun parseDate(dateString: String): Date = Date(apiDateFormat.parse(dateSt
 
 actual fun Date.toReadableDateString() = readableDateFormat.format(date)
 actual fun Date.toReadableTimeString() = readableTimeFormat.format(date)
+
+private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+
+fun Date.toLocalDateTime(format: DateTimeFormatter = dateFormat): LocalDateTime =
+        LocalDateTime.parse(apiDateFormat.format(this), format)

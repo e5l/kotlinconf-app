@@ -1,29 +1,49 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven { url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies" }
+        maven { url 'https://dl.bintray.com/jetbrains/kotlin-native-dependencies' }
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.6.1"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$konan_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
-apply plugin: "konan"
+apply plugin: 'konan'
 
-konan.targets = ["iphone", "iphone_sim"]
+konan.targets = ['iphone_sim', 'iphone']
 
 konanArtifacts {
-    library('helper') {
-        enableMultiplatform true
-        srcFiles 'src/main/kotlin'
+    def productsDir = new File('ios/Frameworks').absolutePath
+
+    interop('libs') {
+        defFile 'src/main/c_interop/libs.def'
+        compilerOpts "-F${productsDir}"
+        linkerOpts "-F${productsDir}"
+        includeDirs new File(".").getAbsolutePath()
     }
 
     program('app') {
-        srcDir 'src/main/kotlin'
+        enableMultiplatform true
+
+        linkerOpts '-rpath', '@executable_path/ios/Frameworks'
+        linkerOpts "-F${productsDir}"
+
+        target('iphone') {
+            libraries {
+                klib 'serialization_iphone'
+            }
+        }
+
+        target('iphone_sim') {
+            libraries {
+                klib 'serialization_iphone_sim'
+            }
+        }
 
         libraries {
-            artifact 'helper'
+            artifact 'libs'
         }
     }
 }

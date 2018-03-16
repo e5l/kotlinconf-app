@@ -10,7 +10,6 @@
 		2C53C44E1FA420CD00BFE61D /* OMGHTTPURLRQ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C53C4491FA420CC00BFE61D /* OMGHTTPURLRQ.framework */; };
 		2CAC582E1F8C351E0036B104 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2CAC582A1F8C351E0036B104 /* Main.storyboard */; };
 		2CAC582F1F8C351E0036B104 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2CAC582C1F8C351E0036B104 /* LaunchScreen.storyboard */; };
-		2CAC58321F8C38850036B104 /* konfswift.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2CAC58301F8C38840036B104 /* konfswift.xcdatamodeld */; };
 		2CAD33261F85318700418DAD /* kotlin in Resources */ = {isa = PBXBuildFile; fileRef = 2CAD33251F85318700418DAD /* kotlin */; };
 		2CB5403E1F56C2C4006EE521 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CB5403D1F56C2C4006EE521 /* main.m */; };
 		2CB540411F56C2C4006EE521 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CB540401F56C2C4006EE521 /* AppDelegate.m */; };
@@ -46,54 +45,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2C2FD82D1F87ED9A003AD07B /* helperlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = helperlib.h; sourceTree = "<group>"; };
-		2C2FD82E1F87ED9A003AD07B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C53C4471FA420CC00BFE61D /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = Frameworks/SDWebImage.framework; sourceTree = "<group>"; };
 		2C53C4481FA420CC00BFE61D /* ILGHttpConstants.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ILGHttpConstants.framework; path = Frameworks/ILGHttpConstants.framework; sourceTree = "<group>"; };
 		2C53C4491FA420CC00BFE61D /* OMGHTTPURLRQ.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OMGHTTPURLRQ.framework; path = Frameworks/OMGHTTPURLRQ.framework; sourceTree = "<group>"; };
 		2C53C44A1FA420CC00BFE61D /* MBProgressHUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MBProgressHUD.framework; path = Frameworks/MBProgressHUD.framework; sourceTree = "<group>"; };
 		2C53C44B1FA420CD00BFE61D /* Groot.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Groot.framework; path = Frameworks/Groot.framework; sourceTree = "<group>"; };
-		2C62DBA01FA6B92700246744 /* KAll+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KAll+CoreDataProperties.h"; sourceTree = "<group>"; };
-		2C62DBA11FA6B92700246744 /* KAll+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KAll+CoreDataClass.h"; sourceTree = "<group>"; };
-		2C62DBA21FA6B92700246744 /* KAll+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KAll+CoreDataClass.m"; sourceTree = "<group>"; };
-		2C62DBA31FA6B92700246744 /* KAll+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KAll+CoreDataProperties.m"; sourceTree = "<group>"; };
-		2C62DBA41FA6B92700246744 /* KSession+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KSession+CoreDataProperties.h"; sourceTree = "<group>"; };
-		2C62DBA51FA6B92700246744 /* KSession+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KSession+CoreDataClass.h"; sourceTree = "<group>"; };
-		2C62DBA61FA6B92700246744 /* KSession+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KSession+CoreDataClass.m"; sourceTree = "<group>"; };
-		2C62DBA71FA6B92700246744 /* KSession+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KSession+CoreDataProperties.m"; sourceTree = "<group>"; };
-		2C62DBA81FA6B92700246744 /* KCategoryItem+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KCategoryItem+CoreDataProperties.h"; sourceTree = "<group>"; };
-		2C62DBA91FA6B92700246744 /* KCategoryItem+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KCategoryItem+CoreDataClass.h"; sourceTree = "<group>"; };
-		2C62DBAA1FA6B92700246744 /* KCategoryItem+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KCategoryItem+CoreDataClass.m"; sourceTree = "<group>"; };
-		2C62DBAB1FA6B92700246744 /* KCategoryItem+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KCategoryItem+CoreDataProperties.m"; sourceTree = "<group>"; };
-		2C62DBAC1FA6B92700246744 /* KRoom+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KRoom+CoreDataProperties.h"; sourceTree = "<group>"; };
-		2C62DBAD1FA6B92700246744 /* KRoom+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KRoom+CoreDataClass.h"; sourceTree = "<group>"; };
-		2C62DBAE1FA6B92700246744 /* KRoom+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KRoom+CoreDataClass.m"; sourceTree = "<group>"; };
-		2C62DBAF1FA6B92700246744 /* KRoom+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KRoom+CoreDataProperties.m"; sourceTree = "<group>"; };
-		2C62DBB01FA6B92700246744 /* KSpeaker+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KSpeaker+CoreDataProperties.h"; sourceTree = "<group>"; };
-		2C62DBB11FA6B92700246744 /* KSpeaker+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KSpeaker+CoreDataClass.h"; sourceTree = "<group>"; };
-		2C62DBB21FA6B92700246744 /* KSpeaker+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KSpeaker+CoreDataClass.m"; sourceTree = "<group>"; };
-		2C62DBB31FA6B92700246744 /* KSpeaker+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KSpeaker+CoreDataProperties.m"; sourceTree = "<group>"; };
-		2C62DBB41FA6B92700246744 /* KFavorite+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KFavorite+CoreDataProperties.h"; sourceTree = "<group>"; };
-		2C62DBB51FA6B92700246744 /* KFavorite+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KFavorite+CoreDataClass.h"; sourceTree = "<group>"; };
-		2C62DBB61FA6B92700246744 /* KFavorite+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KFavorite+CoreDataClass.m"; sourceTree = "<group>"; };
-		2C62DBB71FA6B92700246744 /* KFavorite+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KFavorite+CoreDataProperties.m"; sourceTree = "<group>"; };
-		2C62DBB81FA6B92700246744 /* KLink+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KLink+CoreDataProperties.h"; sourceTree = "<group>"; };
-		2C62DBB91FA6B92700246744 /* KLink+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KLink+CoreDataClass.h"; sourceTree = "<group>"; };
-		2C62DBBA1FA6B92700246744 /* KLink+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KLink+CoreDataClass.m"; sourceTree = "<group>"; };
-		2C62DBBB1FA6B92700246744 /* KLink+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KLink+CoreDataProperties.m"; sourceTree = "<group>"; };
-		2C62DBBC1FA6B92700246744 /* KCategory+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KCategory+CoreDataProperties.h"; sourceTree = "<group>"; };
-		2C62DBBD1FA6B92700246744 /* KCategory+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KCategory+CoreDataClass.h"; sourceTree = "<group>"; };
-		2C62DBBE1FA6B92700246744 /* KCategory+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KCategory+CoreDataClass.m"; sourceTree = "<group>"; };
-		2C62DBBF1FA6B92700246744 /* KCategory+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KCategory+CoreDataProperties.m"; sourceTree = "<group>"; };
-		2C62DBC01FA6B92700246744 /* KVote+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KVote+CoreDataProperties.h"; sourceTree = "<group>"; };
-		2C62DBC11FA6B92700246744 /* KVote+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KVote+CoreDataClass.h"; sourceTree = "<group>"; };
-		2C62DBC21FA6B92700246744 /* KVote+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KVote+CoreDataClass.m"; sourceTree = "<group>"; };
-		2C62DBC31FA6B92700246744 /* KVote+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KVote+CoreDataProperties.m"; sourceTree = "<group>"; };
 		2CAC582B1F8C351E0036B104 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2CAC582D1F8C351E0036B104 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		2CAC58311F8C38840036B104 /* konfswift.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = konfswift.xcdatamodel; sourceTree = "<group>"; };
-		2CAC58331F8C45DC0036B104 /* BConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BConst.h; sourceTree = "<group>"; };
-		2CAC58341F8C45DC0036B104 /* BConst.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BConst.m; sourceTree = "<group>"; };
 		2CAD33251F85318700418DAD /* kotlin */ = {isa = PBXFileReference; lastKnownFileType = folder; name = kotlin; path = src/main/kotlin; sourceTree = "<group>"; };
 		2CB540391F56C2C4006EE521 /* konan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = konan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CB5403D1F56C2C4006EE521 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -121,53 +79,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2C2FD82C1F87ED9A003AD07B /* helperlib */ = {
-			isa = PBXGroup;
-			children = (
-				2C62DBA01FA6B92700246744 /* KAll+CoreDataProperties.h */,
-				2C62DBA11FA6B92700246744 /* KAll+CoreDataClass.h */,
-				2C62DBA21FA6B92700246744 /* KAll+CoreDataClass.m */,
-				2C62DBA31FA6B92700246744 /* KAll+CoreDataProperties.m */,
-				2C62DBA41FA6B92700246744 /* KSession+CoreDataProperties.h */,
-				2C62DBA51FA6B92700246744 /* KSession+CoreDataClass.h */,
-				2C62DBA61FA6B92700246744 /* KSession+CoreDataClass.m */,
-				2C62DBA71FA6B92700246744 /* KSession+CoreDataProperties.m */,
-				2C62DBA81FA6B92700246744 /* KCategoryItem+CoreDataProperties.h */,
-				2C62DBA91FA6B92700246744 /* KCategoryItem+CoreDataClass.h */,
-				2C62DBAA1FA6B92700246744 /* KCategoryItem+CoreDataClass.m */,
-				2C62DBAB1FA6B92700246744 /* KCategoryItem+CoreDataProperties.m */,
-				2C62DBAC1FA6B92700246744 /* KRoom+CoreDataProperties.h */,
-				2C62DBAD1FA6B92700246744 /* KRoom+CoreDataClass.h */,
-				2C62DBAE1FA6B92700246744 /* KRoom+CoreDataClass.m */,
-				2C62DBAF1FA6B92700246744 /* KRoom+CoreDataProperties.m */,
-				2C62DBB01FA6B92700246744 /* KSpeaker+CoreDataProperties.h */,
-				2C62DBB11FA6B92700246744 /* KSpeaker+CoreDataClass.h */,
-				2C62DBB21FA6B92700246744 /* KSpeaker+CoreDataClass.m */,
-				2C62DBB31FA6B92700246744 /* KSpeaker+CoreDataProperties.m */,
-				2C62DBB41FA6B92700246744 /* KFavorite+CoreDataProperties.h */,
-				2C62DBB51FA6B92700246744 /* KFavorite+CoreDataClass.h */,
-				2C62DBB61FA6B92700246744 /* KFavorite+CoreDataClass.m */,
-				2C62DBB71FA6B92700246744 /* KFavorite+CoreDataProperties.m */,
-				2C62DBB81FA6B92700246744 /* KLink+CoreDataProperties.h */,
-				2C62DBB91FA6B92700246744 /* KLink+CoreDataClass.h */,
-				2C62DBBA1FA6B92700246744 /* KLink+CoreDataClass.m */,
-				2C62DBBB1FA6B92700246744 /* KLink+CoreDataProperties.m */,
-				2C62DBBC1FA6B92700246744 /* KCategory+CoreDataProperties.h */,
-				2C62DBBD1FA6B92700246744 /* KCategory+CoreDataClass.h */,
-				2C62DBBE1FA6B92700246744 /* KCategory+CoreDataClass.m */,
-				2C62DBBF1FA6B92700246744 /* KCategory+CoreDataProperties.m */,
-				2C62DBC01FA6B92700246744 /* KVote+CoreDataProperties.h */,
-				2C62DBC11FA6B92700246744 /* KVote+CoreDataClass.h */,
-				2C62DBC21FA6B92700246744 /* KVote+CoreDataClass.m */,
-				2C62DBC31FA6B92700246744 /* KVote+CoreDataProperties.m */,
-				2C2FD82D1F87ED9A003AD07B /* helperlib.h */,
-				2C2FD82E1F87ED9A003AD07B /* Info.plist */,
-				2CAC58331F8C45DC0036B104 /* BConst.h */,
-				2CAC58341F8C45DC0036B104 /* BConst.m */,
-			);
-			path = helperlib;
-			sourceTree = "<group>";
-		};
 		2C5C63391FA20D25009C8514 /* stubs */ = {
 			isa = PBXGroup;
 			children = (
@@ -189,7 +100,6 @@
 				2C53C4471FA420CC00BFE61D /* SDWebImage.framework */,
 				2CAD33251F85318700418DAD /* kotlin */,
 				2CB5403B1F56C2C4006EE521 /* konan */,
-				2C2FD82C1F87ED9A003AD07B /* helperlib */,
 				2CB5403A1F56C2C4006EE521 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -205,7 +115,6 @@
 		2CB5403B1F56C2C4006EE521 /* konan */ = {
 			isa = PBXGroup;
 			children = (
-				2CAC58301F8C38840036B104 /* konfswift.xcdatamodeld */,
 				2CAC582C1F8C351E0036B104 /* LaunchScreen.storyboard */,
 				2CAC582A1F8C351E0036B104 /* Main.storyboard */,
 				2C5C63391FA20D25009C8514 /* stubs */,
@@ -308,7 +217,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp \"$SRCROOT/build/konan/bin/iphone/app.kexe\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"";
+			shellScript = "cp \"$SRCROOT/build/konan/bin/xcode/app.kexe\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"";
 		};
 		2C901F991F59928A004412FA /* Build Binary From Kotlin Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -322,7 +231,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "case \"$PLATFORM_NAME\" in\niphoneos)\nTARGET=iphone\nTASK=compileKonanAppIphone\n;;\niphonesimulator)\nTARGET=iphone_sim\nTASK=compileKonanAppIphone_sim\n;;\n*)\necho \"Unknown platform: $PLATFORN_NAME\"\nexit 1\n;;\nesac\n\nmkdir -p \"$SRCROOT/build/konan/bin/\"\nrm -f \"$SRCROOT/build/konan/bin/xcode\"\nln -s \"$TARGET\" \"$SRCROOT/build/konan/bin/xcode\"\n\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" \"$TASK\"\n";
+			shellScript = "case \"$PLATFORM_NAME\" in\niphoneos)\nTARGET=iphone\nTASK=compileKonanAppIphone\n;;\niphonesimulator)\nTARGET=iphone_sim\nTASK=compileKonanAppIphone_sim\n;;\n*)\necho \"Unknown platform: $PLATFORN_NAME\"\nexit 1\n;;\nesac\n\nmkdir -p \"$SRCROOT/build/konan/bin/\"\nrm -f \"$SRCROOT/build/konan/bin/xcode\"\nln -s \"$TARGET\" \"$SRCROOT/build/konan/bin/xcode\"\n\n\ncd ..\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" \"$TASK\"";
 		};
 		2C901F9C1F5D7074004412FA /* Remove Original Binary */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -346,7 +255,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2CB540441F56C2C4006EE521 /* SessionsViewController.m in Sources */,
-				2CAC58321F8C38850036B104 /* konfswift.xcdatamodeld in Sources */,
 				2CB540411F56C2C4006EE521 /* AppDelegate.m in Sources */,
 				2CB5403E1F56C2C4006EE521 /* main.m in Sources */,
 			);
@@ -402,6 +310,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -422,7 +331,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -457,6 +366,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -471,7 +381,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -540,19 +450,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		2CAC58301F8C38840036B104 /* konfswift.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				2CAC58311F8C38840036B104 /* konfswift.xcdatamodel */,
-			);
-			currentVersion = 2CAC58311F8C38840036B104 /* konfswift.xcdatamodel */;
-			path = konfswift.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 2CB540311F56C2C4006EE521 /* Project object */;
 }

@@ -1,12 +1,7 @@
-import libs.*
 import kotlinx.cinterop.*
-import platform.UIKit.*
-import platform.MapKit.*
-import platform.objc.*
-import platform.darwin.*
+import org.jetbrains.kotlinconf.ui.*
 import platform.Foundation.*
-import platform.CoreGraphics.*
-import platform.CoreLocation.*
+import platform.UIKit.*
 
 fun main(args: Array<String>) {
     memScoped {
