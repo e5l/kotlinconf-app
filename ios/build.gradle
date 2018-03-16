@@ -27,18 +27,18 @@ konanArtifacts {
     program('app') {
         enableMultiplatform true
 
-        linkerOpts '-rpath', '@executable_path/ios/Frameworks'
+        linkerOpts '-rpath', '@executable_path/Frameworks'
         linkerOpts "-F${productsDir}"
 
         target('iphone') {
             libraries {
-                klib 'serialization_iphone'
+                klib 'serialization'
             }
         }
 
         target('iphone_sim') {
             libraries {
-                klib 'serialization_iphone_sim'
+                klib 'serialization_sim'
             }
         }
 
