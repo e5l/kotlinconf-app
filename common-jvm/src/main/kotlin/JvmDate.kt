@@ -39,8 +39,8 @@ val readableTimeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
 actual fun parseDate(dateString: String): Date = Date(apiDateFormat.parse(dateString))
 
-actual fun Date.toReadableDateString() = readableDateFormat.format(date)
-actual fun Date.toReadableTimeString() = readableTimeFormat.format(date)
+actual fun Date.toReadableDateString(): String = readableDateFormat.format(date)
+actual fun Date.toReadableTimeString(): String = readableTimeFormat.format(date)
 
 private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
 
