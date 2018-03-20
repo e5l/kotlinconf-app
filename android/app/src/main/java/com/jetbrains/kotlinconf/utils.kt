@@ -13,12 +13,14 @@ import android.text.Html
 import android.text.Spanned
 import android.util.TypedValue
 import android.view.ViewManager
+import com.google.gson.*
 import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.custom.ankoView
 import ru.gildor.coroutines.retrofit.ErrorResult
 import ru.gildor.coroutines.retrofit.Result
 import ru.gildor.coroutines.retrofit.getOrNull
+import java.lang.reflect.Type
 
 inline fun ViewManager.multilineCollapsingToolbarLayout(theme: Int = 0, init: CollapsingToolbarLayout.() -> Unit): CollapsingToolbarLayout {
     return ankoView({ CollapsingToolbarLayout(it) }, theme = theme, init = init)
@@ -60,8 +62,8 @@ inline fun <T> LiveData<T>.observe(owner: LifecycleOwner, crossinline observer: 
         observe(owner, Observer { observer(it) })
 
 
-inline fun <T : Any> Result<T>.ifFailed(handler: () -> Unit): Result<T> {
-    if (this is ErrorResult) handler()
+inline fun <T : Any> Result<T>.ifFailed(handler: (ErrorResult) -> Unit): Result<T> {
+    if (this is ErrorResult) handler(this)
     return this
 }
 
@@ -78,4 +80,10 @@ inline fun <T : Any> Result<T>.ifError(handler: (code: Int) -> Unit): Result<T> 
 inline fun <T : Any> Result<T>.ifException(handler: (exception: Throwable) -> Unit): Result<T> {
     (this as? Result.Exception)?.exception?.let { handler(it) }
     return this
+}
+
+object AndroidDateDeserializer: JsonDeserializer<Date> {
+    override fun deserialize(p0: JsonElement, p1: Type?, p2: JsonDeserializationContext?): Date {
+        return parseDate(p0.asString)
+    }
 }

@@ -8,7 +8,7 @@ allprojects {
         }
         dependencies {
             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-            classpath "org.jetbrains.kotlinx:kotlinx-gradle-serialization-plugin:$serialization_version"
+            classpath "org.jetbrains.kotlinx:kotlinx-gradle-serialization-plugin:0.4.2"
         }
 
     }
@@ -17,5 +17,6 @@ allprojects {
         maven { url "https://kotlin.bintray.com/kotlinx" }
         maven { url 'https://maven.google.com' }
         jcenter()
+        mavenLocal()
     }
 }

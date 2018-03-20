@@ -40,10 +40,10 @@ class KonfLoader(private val service: KonfService) {
         val moc = appDelegate.managedObjectContext
 
         performSafe(moc) {
-            moc.deleteAll("KAll")
+//            moc.deleteAll("AllData")
             
             val all = nsTry { errorPtr ->
-                GRTJSONSerialization.objectWithEntityName("KAll", 
+                GRTJSONSerialization.objectWithEntityName("AllData",
                     fromJSONDictionary = dict, inContext = moc, error = errorPtr)
             }!!.uncheckedCast<AllData>()
 

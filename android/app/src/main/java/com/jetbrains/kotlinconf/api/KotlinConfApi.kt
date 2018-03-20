@@ -1,12 +1,15 @@
 package org.jetbrains.kotlinconf.api
 
 import com.google.gson.GsonBuilder
-import org.jetbrains.kotlinconf.data.AllData
-import org.jetbrains.kotlinconf.data.Favorite
-import org.jetbrains.kotlinconf.data.Vote
+import com.google.gson.reflect.TypeToken
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import org.jetbrains.kotlinconf.AndroidDateDeserializer
+import org.jetbrains.kotlinconf.Date
+import org.jetbrains.kotlinconf.data.AllData
+import org.jetbrains.kotlinconf.data.Favorite
+import org.jetbrains.kotlinconf.data.Vote
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -41,23 +44,24 @@ interface KotlinConfApi {
 
         fun create(userId: String): KotlinConfApi {
             val gson = GsonBuilder()
-                    .setDateFormat(DATE_FORMAT)
-                    .create()
+                .setDateFormat(DATE_FORMAT)
+                .registerTypeAdapter(object : TypeToken<Date>() {}.type, AndroidDateDeserializer)
+                .create()
 
             val client = OkHttpClient.Builder().addInterceptor { chain ->
                 val newRequest = chain.request()
-                        .newBuilder()
-                        .addHeader("Authorization", "Bearer $userId")
-                        .addHeader("Accept", "application/json")
-                        .build()
+                    .newBuilder()
+                    .addHeader("Authorization", "Bearer $userId")
+                    .addHeader("Accept", "application/json")
+                    .build()
                 chain.proceed(newRequest)
             }.build()
 
             val retrofit = Retrofit.Builder()
-                    .client(client)
-                    .baseUrl(KotlinConfApi.END_POINT)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build()
+                .client(client)
+                .baseUrl(KotlinConfApi.END_POINT)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build()
 
             return retrofit.create(KotlinConfApi::class.java)
         }

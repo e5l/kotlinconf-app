@@ -247,7 +247,7 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
                     updateLocalData(allData)
                 }
                 .ifFailed {
-                    warn("Failed to get data from server")
+                    warn("Failed to get data from server", it.exception )
                     onError?.invoke(Error.FAILED_TO_GET_DATA)
                 }
 
