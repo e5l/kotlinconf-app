@@ -1,5 +1,8 @@
 package org.jetbrains.kotlinconf
 
+import com.google.gson.*
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.*
@@ -43,3 +46,17 @@ actual fun parseDate(dateString: String): Date = Date(apiDateFormat.parse(dateSt
 
 actual fun Date.toReadableDateString() = readableDateFormat.format(date)
 actual fun Date.toReadableTimeString() = readableTimeFormat.format(date)
+
+
+object GsonDateDeserializer: JsonDeserializer<Date>, JsonSerializer<Date> {
+    override fun deserialize(p0: JsonElement, p1: Type?, p2: JsonDeserializationContext?): Date {
+        return parseDate(p0.asString)
+    }
+
+    override fun serialize(src: Date?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
+        return if (src == null) JsonNull.INSTANCE else JsonPrimitive(apiDateFormat.format(src.date))
+    }
+
+    fun register(builder: GsonBuilder): GsonBuilder =
+        builder.registerTypeAdapter(object : TypeToken<Date>() {}.type, GsonDateDeserializer)
+}

@@ -1,12 +1,10 @@
 package org.jetbrains.kotlinconf.api
 
 import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
-import org.jetbrains.kotlinconf.AndroidDateDeserializer
-import org.jetbrains.kotlinconf.Date
+import org.jetbrains.kotlinconf.GsonDateDeserializer
 import org.jetbrains.kotlinconf.data.AllData
 import org.jetbrains.kotlinconf.data.Favorite
 import org.jetbrains.kotlinconf.data.Vote
@@ -43,10 +41,10 @@ interface KotlinConfApi {
         const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
         fun create(userId: String): KotlinConfApi {
-            val gson = GsonBuilder()
-                .setDateFormat(DATE_FORMAT)
-                .registerTypeAdapter(object : TypeToken<Date>() {}.type, AndroidDateDeserializer)
-                .create()
+            val gson = GsonBuilder().apply {
+                setDateFormat(DATE_FORMAT)
+                GsonDateDeserializer.register(this)
+            }.create()
 
             val client = OkHttpClient.Builder().addInterceptor { chain ->
                 val newRequest = chain.request()
