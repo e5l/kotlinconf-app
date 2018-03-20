@@ -15,7 +15,7 @@ private fun ClassName.listify() = ParameterizedTypeName.get(List::class.asTypeNa
 class Generator(val outputDir: File) {
     val nullI = Int::class.nullableRef
     val nullS = String::class.nullableRef
-    val pkg = "org.jetbrains.kotlinconf.data.generated"
+    val pkg = "org.jetbrains.kotlinconf.data"
 
     fun execute() {
         genCategory()
@@ -53,10 +53,18 @@ class Generator(val outputDir: File) {
     private lateinit var fav: ClassName
     private lateinit var vote: ClassName
 
+    private fun SClass.setableProperty(name: String, type: ClassName) {
+        assert(type.nullable)
+        property(name, type) {
+            defaultValue = "null"
+            mutable = true
+        }
+    }
+
     private fun genMisc() {
         saveFile(outputDir, pkg, "Misc") {
             fav = serializableClass("Favorite") {
-                property("sessionId", nullS)
+                setableProperty("sessionId", nullS)
             }.serializableClassName
 
             linkRef = serializableClass("Link") {
@@ -72,8 +80,8 @@ class Generator(val outputDir: File) {
             }.serializableClassName
 
             vote = serializableClass("Vote") {
-                property("sessionId", nullS)
-                property("rating", nullI)
+                setableProperty("sessionId", nullS)
+                setableProperty("rating", nullI)
             }.serializableClassName
         }
     }

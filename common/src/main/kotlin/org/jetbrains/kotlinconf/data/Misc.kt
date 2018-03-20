@@ -1,5 +1,5 @@
 // Auto-generated file, do not modify!
-package org.jetbrains.kotlinconf.data.generated
+package org.jetbrains.kotlinconf.data
 
 import kotlin.Int
 import kotlin.String
@@ -14,11 +14,11 @@ import kotlinx.serialization.internal.NullableSerializer
 import kotlinx.serialization.internal.SerialClassDescImplTagged
 import kotlinx.serialization.internal.StringSerializer
 
-data class Favorite(val sessionId: String?) {
+data class Favorite(var sessionId: String? = null) {
     @Suppress("NAME_SHADOWING")
     object serializer : KSerializer<Favorite> {
         override val serialClassDesc: KSerialClassDesc =
-                object : SerialClassDescImplTagged("org.jetbrains.kotlinconf.data.generated.Favorite") {
+                object : SerialClassDescImplTagged("org.jetbrains.kotlinconf.data.Favorite") {
             init {
                 addElement("sessionId")
             }
@@ -66,7 +66,7 @@ data class Link(
     @Suppress("NAME_SHADOWING")
     object serializer : KSerializer<Link> {
         override val serialClassDesc: KSerialClassDesc =
-                object : SerialClassDescImplTagged("org.jetbrains.kotlinconf.data.generated.Link") {
+                object : SerialClassDescImplTagged("org.jetbrains.kotlinconf.data.Link") {
             init {
                 addElement("linkType")
                 addElement("title")
@@ -134,7 +134,7 @@ data class Room(
     @Suppress("NAME_SHADOWING")
     object serializer : KSerializer<Room> {
         override val serialClassDesc: KSerialClassDesc =
-                object : SerialClassDescImplTagged("org.jetbrains.kotlinconf.data.generated.Room") {
+                object : SerialClassDescImplTagged("org.jetbrains.kotlinconf.data.Room") {
             init {
                 addElement("name")
                 addElement("id")
@@ -194,11 +194,11 @@ data class Room(
     }
 }
 
-data class Vote(val sessionId: String?, val rating: Int?) {
+data class Vote(var sessionId: String? = null, var rating: Int? = null) {
     @Suppress("NAME_SHADOWING")
     object serializer : KSerializer<Vote> {
         override val serialClassDesc: KSerialClassDesc =
-                object : SerialClassDescImplTagged("org.jetbrains.kotlinconf.data.generated.Vote") {
+                object : SerialClassDescImplTagged("org.jetbrains.kotlinconf.data.Vote") {
             init {
                 addElement("sessionId")
                 addElement("rating")

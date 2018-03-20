@@ -29,7 +29,7 @@ class KotlinConfApi(val userId: String) {
     suspend fun getAll(): AllData {
         val get = get("all")
         println(get.body)
-        return AllData()
+        throw ApiException(get)
     }
 
     suspend fun postFavorite(favorite: Favorite): Unit {
