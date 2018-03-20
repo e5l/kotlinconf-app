@@ -1,8 +1,8 @@
 package org.jetbrains.kotlinconf
 
 import kotlinx.serialization.json.JSON
-import org.jetbrains.kotlinconf.data.generated.AllData
-import org.jetbrains.kotlinconf.data.generated.Room
+import org.jetbrains.kotlinconf.data.AllData
+import org.jetbrains.kotlinconf.data.Room
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -77,7 +77,10 @@ class SerializerTest {
             assertEquals(null, favorites)
             assertEquals(null, speakers)
             assertEquals(emptyList(), questions)
-            assertEquals(listOf(Room("St. Petersburg", 220, 0),Room("Munich", 221, 1)), rooms)
+            assertEquals(listOf(
+                Room("St. Petersburg", 220, 0),
+                Room("Munich", 221, 1)
+            ), rooms)
             assertNotNull(sessions)
             assertEquals(1, sessions!!.size)
             val date = sessions!!.first().startsAt
