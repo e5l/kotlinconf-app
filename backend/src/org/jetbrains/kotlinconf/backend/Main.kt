@@ -4,21 +4,28 @@ import com.google.gson.GsonBuilder
 import io.ktor.application.*
 import io.ktor.auth.Principal
 import io.ktor.auth.authentication
+import io.ktor.cio.toByteArray
+import io.ktor.content.TextContent
 import io.ktor.content.default
 import io.ktor.content.files
 import io.ktor.content.static
 import io.ktor.features.*
 import io.ktor.gson.GsonConverter
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
+import io.ktor.pipeline.PipelineContext
+import io.ktor.request.ApplicationReceiveRequest
+import io.ktor.request.contentCharset
 import io.ktor.request.header
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.Routing
 import io.ktor.util.error
 import io.ktor.websocket.WebSockets
+import kotlinx.coroutines.experimental.io.ByteReadChannel
+import kotlinx.coroutines.experimental.io.jvm.javaio.toInputStream
+import kotlinx.serialization.json.JSON
+import kotlinx.serialization.serializerByClass
+import kotlinx.serialization.serializerByValue
 import org.jetbrains.kotlinconf.GsonDateDeserializer
 
 val gson = GsonBuilder().apply {
@@ -52,7 +59,7 @@ fun Application.main() {
     }
 
     install(ContentNegotiation) {
-        register(ContentType.Application.Json, GsonConverter(gson))
+        register(ContentType.Application.Json, SerialContentConverter(JSON(indented = true)))
     }
 
     install(CORS) {
