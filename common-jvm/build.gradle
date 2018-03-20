@@ -3,16 +3,13 @@ apply plugin: 'kotlinx-serialization'
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
+    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_runtime_version"
     compile "io.ktor.common.client:http-client-jvm:$http_client_version"
     testCompile 'junit:junit:4.12'
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     expectedBy project(":common")
 }
-
-targetCompatibility = '1.6'
-sourceCompatibility = '1.6'
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.6"

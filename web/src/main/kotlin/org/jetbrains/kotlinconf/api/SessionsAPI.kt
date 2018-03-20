@@ -1,5 +1,8 @@
 package org.jetbrains.kotlinconf.api
 
+import kotlinx.serialization.SerialContext
+import org.jetbrains.kotlinconf.CommonDateSerializer
+import org.jetbrains.kotlinconf.Date
 import org.jetbrains.kotlinconf.SessionModel
 import org.jetbrains.kotlinconf.data.AllData
 import org.jetbrains.kotlinconf.data.Session
@@ -9,9 +12,12 @@ import kotlin.js.JSON
 import kotlinx.serialization.json.JSON as KJSON
 
 class SessionsAPI(private val baseUrl: String, private val baseWsUrl: String) {
+    private val scope = SerialContext().apply { registerSerializer(Date::class, CommonDateSerializer) }
+    private val kjson = KJSON(context = scope)
+
     private suspend fun fetchAll(): AllData {
         val rawData = httpGet("$baseUrl/all")
-        return KJSON.parse(AllData.serializer(), rawData)
+        return kjson.parse(AllData.serializer(), rawData)
     }
 
     suspend fun fetchSessions(): List<Session> = fetchAll().sessions ?: emptyList()

@@ -1,19 +1,31 @@
 package org.jetbrains.kotlinconf.backend
 
-import com.google.gson.*
+import com.google.gson.GsonBuilder
 import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.content.*
+import io.ktor.auth.Principal
+import io.ktor.auth.authentication
+import io.ktor.content.default
+import io.ktor.content.files
+import io.ktor.content.static
 import io.ktor.features.*
-import io.ktor.gson.*
-import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import io.ktor.util.*
-import io.ktor.websocket.*
+import io.ktor.gson.GsonConverter
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.request.header
+import io.ktor.response.respond
+import io.ktor.routing.Route
+import io.ktor.routing.Routing
+import io.ktor.util.error
+import io.ktor.websocket.WebSockets
+import org.jetbrains.kotlinconf.GsonDateDeserializer
 
-val gson = GsonBuilder().setPrettyPrinting().serializeNulls().create()
+val gson = GsonBuilder().apply {
+    setPrettyPrinting()
+    serializeNulls()
+    GsonDateDeserializer.register(this)
+}.create()
 
 fun Application.main() {
     val config = environment.config.config("service")

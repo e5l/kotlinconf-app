@@ -11,9 +11,9 @@ data class Session(
         val questionAnswers: List<QuestionAnswer?>? = null,
         val speakers: List<String?>? = null,
         val description: String? = null,
-        val startsAt: Date? = null,
+        @Serializable(with = CommonDateSerializer::class) val startsAt: Date? = null,
         val title: String? = null,
-        val endsAt: Date? = null,
+        @Serializable(with = CommonDateSerializer::class) val endsAt: Date? = null,
         val categoryItems: List<Int?>? = null,
         val roomId: Int? = null
 )
