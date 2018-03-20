@@ -20,7 +20,6 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
     var onError: ((action: Error) -> Unit)? = null
 
     private val gson: Gson by lazy {
-        SecureRandom.getInstance()
         GsonBuilder()
                 .setDateFormat(DATE_FORMAT)
                 .create()
@@ -233,9 +232,8 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
             syncLocalRatings(allData)
             updateLocalData(allData)
         } catch (casue: Throwable) {
-            warn("Failed to get data from server")
+            warn("Failed to get data from server", it.exception )
             onError?.invoke(Error.FAILED_TO_GET_DATA)
-
         }
         _isUpdating.value = false
     }

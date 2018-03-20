@@ -1,0 +1,18 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.2.21"
+}
+
+repositories() {
+    jcenter()
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    mavenLocal()
+}
+
+sourceSets {
+    main.kotlin.srcDirs = ["src"]
+}
+
+dependencies {
+    compile gradleApi()
+    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime-sourcegen:0.4.3-alpha-1"
+}

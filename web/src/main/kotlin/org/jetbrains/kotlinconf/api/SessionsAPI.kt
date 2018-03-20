@@ -11,7 +11,7 @@ import kotlinx.serialization.json.JSON as KJSON
 class SessionsAPI(private val baseUrl: String, private val baseWsUrl: String) {
     private suspend fun fetchAll(): AllData {
         val rawData = httpGet("$baseUrl/all")
-        return KJSON.parse<AllData>(rawData)
+        return KJSON.parse(AllData.serializer(), rawData)
     }
 
     suspend fun fetchSessions(): List<Session> = fetchAll().sessions ?: emptyList()

@@ -12,6 +12,8 @@ actual class Date constructor(val origin: NSDate) {
     actual fun getHours(): Int = 0
     actual fun getMinutes(): Int = 0
     actual fun getTime(): Number = 0
+
+    actual companion object
 }
 
 actual fun parseDate(dateString: String): Date = Date()

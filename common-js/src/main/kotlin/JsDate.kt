@@ -12,7 +12,7 @@ actual external class Date {
 
     actual fun getTime(): Number
 
-    companion object {
+    actual companion object {
         fun parse(string: String): Number
     }
 }

@@ -27,6 +27,8 @@ actual class Date {
     actual fun getTime(): Number = calendar.timeInMillis
 
     override fun equals(other: Any?): Boolean = other is org.jetbrains.kotlinconf.util.Date && other.calendar.time == calendar.time
+
+    actual companion object
 }
 
 actual operator fun org.jetbrains.kotlinconf.util.Date.compareTo(otherDate: org.jetbrains.kotlinconf.util.Date): Int = date.compareTo(otherDate.date)
