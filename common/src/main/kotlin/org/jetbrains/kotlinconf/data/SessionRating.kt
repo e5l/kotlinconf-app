@@ -1,4 +1,4 @@
-package org.jetbrains.kotlinconf.model
+package org.jetbrains.kotlinconf.data
 
 enum class SessionRating(val value: Int) {
     BAD(-1),

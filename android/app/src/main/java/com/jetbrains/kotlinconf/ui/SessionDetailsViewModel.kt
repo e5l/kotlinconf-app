@@ -8,7 +8,7 @@ import android.arch.lifecycle.MutableLiveData
 import org.jetbrains.kotlinconf.KotlinConfApplication
 import org.jetbrains.kotlinconf.SessionModel
 import org.jetbrains.kotlinconf.model.KotlinConfDataRepository
-import org.jetbrains.kotlinconf.model.SessionRating
+import org.jetbrains.kotlinconf.data.SessionRating
 import org.jetbrains.anko.AnkoLogger
 
 class SessionDetailsViewModel(app: Application): AndroidViewModel(app), AnkoLogger {

@@ -12,7 +12,7 @@ class FavoritesManager {
     private fun getFavorite(session: Session): Favorite? {
         val moc = appDelegate.managedObjectContext
 
-        val request = NSFetchRequest(entityName = "KFavorite")
+        val request = NSFetchRequest(entityName = "Favorite")
         request.fetchLimit = 1
         request.predicate = NSPredicate.predicateWithFormat(
                 "sessionId == %@", 
@@ -50,7 +50,7 @@ class FavoritesManager {
             moc.deleteObject(favorite.uncheckedCast())
         } else if (isFavorite) {
             val favoriteItem = NSEntityDescription
-                    .insertNewObjectForEntityForName("KFavorite", inManagedObjectContext = moc)
+                    .insertNewObjectForEntityForName("Favorite", inManagedObjectContext = moc)
                     .uncheckedCast<Favorite>()
 
             favoriteItem.sessionId = session.id
@@ -64,7 +64,7 @@ class FavoritesManager {
 
         var favorites: List<Favorite> = emptyList()
         attempt(null) {
-            favorites = moc.executeFetchRequest(NSFetchRequest(entityName = "KFavorite")).toList()
+            favorites = moc.executeFetchRequest(NSFetchRequest(entityName = "Favorite")).toList()
         }
 
         val idsArray = NSMutableArray.arrayWithCapacity(favorites.size.toLong())

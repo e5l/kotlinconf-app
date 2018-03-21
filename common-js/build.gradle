@@ -5,14 +5,15 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
     compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$serialization_version"
+    compile "io.ktor.common.client:http-client-browser:$http_client_version"
     testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
-    expectedBy project(":common")
+    expectedBy project(':common')
 }
 
 [compileKotlin2Js, compileTestKotlin2Js]*.configure {
     kotlinOptions {
         sourceMap = true
-        sourceMapEmbedSources = "always"
+        sourceMapEmbedSources = 'always'
         moduleKind = 'commonjs'
     }
 }

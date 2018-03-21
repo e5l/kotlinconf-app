@@ -1,3 +1,5 @@
+apply plugin: 'konan'
+
 buildscript {
     repositories {
         mavenCentral()
@@ -10,9 +12,11 @@ buildscript {
     }
 }
 
-apply plugin: 'konan'
-
 konan.targets = ['iphone_sim', 'iphone']
+
+repositories {
+    maven { url = 'https://dl.bintray.com/e5l/http-client-common' }
+}
 
 konanArtifacts {
     def productsDir = new File('ios/Frameworks').absolutePath
@@ -24,7 +28,7 @@ konanArtifacts {
         includeDirs new File(".").getAbsolutePath()
     }
 
-    program('app') {
+    program('App') {
         enableMultiplatform true
 
         linkerOpts '-rpath', '@executable_path/Frameworks'
@@ -32,14 +36,18 @@ konanArtifacts {
 
         target('iphone') {
             libraries {
-                klib 'serialization'
+                klib 'serialization_iphone'
             }
         }
 
         target('iphone_sim') {
             libraries {
-                klib 'serialization_sim'
+                klib 'serialization_iphone_sim'
             }
+        }
+
+        dependencies {
+            artifactApp "io.ktor.common.client:http-client-native:$http_client_version"
         }
 
         libraries {

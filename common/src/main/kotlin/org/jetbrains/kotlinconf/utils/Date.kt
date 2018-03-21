@@ -1,4 +1,4 @@
-package org.jetbrains.kotlinconf
+package org.jetbrains.kotlinconf.utils
 
 expect class Date() {
     fun getDate(): Int

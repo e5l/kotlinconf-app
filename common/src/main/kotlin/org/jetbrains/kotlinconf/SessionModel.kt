@@ -1,23 +1,28 @@
 package org.jetbrains.kotlinconf
 
 import org.jetbrains.kotlinconf.data.*
+import org.jetbrains.kotlinconf.utils.*
+import io.ktor.common.client.*
 
 class SessionModel(
-    var id: String,
-    var title: String,
-    val category: String?,
-    var description: String,
-    var startsAt: Date,
-    var endsAt: Date,
-    val room: String?,
-    var speakers: Array<Speaker>
+        var id: String,
+        var title: String,
+        val category: String?,
+        var description: String,
+        var startsAt: Date,
+        var endsAt: Date,
+        val room: String?,
+        var speakers: Array<Speaker>
 ) {
     companion object {
         fun forSession(all: AllData, sessionId: String): SessionModel? {
+            val client = HttpClient()
             val briefSession = all.sessions?.firstOrNull { it.id == sessionId } ?: return null
             val speakerMap = all.speakers?.associateBy { it.id } ?: emptyMap()
             val roomMap = all.rooms?.associateBy { it.id } ?: emptyMap()
-            val categoryMap = all.categories?.flatMap { it.items?.filterNotNull() ?: emptyList() }?.associateBy { it.id } ?: emptyMap()
+            val categoryMap = all.categories?.flatMap {
+                it.items?.filterNotNull() ?: emptyList()
+            }?.associateBy { it.id } ?: emptyMap()
             return forSession(briefSession,
                     speakerProvider = { id -> speakerMap[id] },
                     categoryProvider = { id -> categoryMap[id] },
@@ -40,7 +45,8 @@ class SessionModel(
                     description = briefSession.description ?: "",
                     startsAt = startsAt,
                     endsAt = endsAt,
-                    speakers = (briefSession.speakers ?: emptyList()).filterNotNull().mapNotNull { speakerProvider(it) }.toTypedArray(),
+                    speakers = (briefSession.speakers
+                            ?: emptyList()).filterNotNull().mapNotNull { speakerProvider(it) }.toTypedArray(),
                     room = briefSession.roomId?.let(roomProvider)?.name
             )
         }

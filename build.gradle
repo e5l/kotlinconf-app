@@ -1,8 +1,10 @@
 allprojects {
     buildscript {
         repositories {
-            maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
-            maven { url "https://kotlin.bintray.com/kotlinx" }
+            mavenLocal()
+            maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+            maven { url 'https://dl.bintray.com/kotlin/ktor' }
+            maven { url 'https://kotlin.bintray.com/kotlinx' }
             maven { url 'https://maven.google.com' }
             jcenter()
         }
@@ -13,8 +15,10 @@ allprojects {
 
     }
     repositories {
-        maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
-        maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        maven { url 'https://dl.bintray.com/e5l/http-client-common' }
+        maven { url 'https://dl.bintray.com/kotlin/ktor' }
+        maven { url 'https://kotlin.bintray.com/kotlinx' }
         maven { url 'https://maven.google.com' }
         jcenter()
     }

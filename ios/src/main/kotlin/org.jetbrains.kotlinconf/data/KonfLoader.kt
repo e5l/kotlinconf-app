@@ -40,27 +40,30 @@ class KonfLoader(private val service: KonfService) {
         val moc = appDelegate.managedObjectContext
 
         performSafe(moc) {
-            moc.deleteAll("KAll")
+//            moc.deleteAll("AllData")
             
             val all = nsTry { errorPtr ->
-                GRTJSONSerialization.objectWithEntityName("KAll", 
+                GRTJSONSerialization.objectWithEntityName("AllData",
                     fromJSONDictionary = dict, inContext = moc, error = errorPtr)
             }!!.uncheckedCast<AllData>()
 
             for (session in all.sessions ?: emptyList()) {
                 val speakerIdsList: List<String?> = session.speakers!!
-                
+                println("1")
+
                 var subtitle = speakerIdsList.asSequence()
                     .filterNotNull()
                     .mapNotNull { all.findSpeaker(it) }
                     .take(2)
                     .mapNotNull { it.fullName }
                     .joinToString()
+                println("1")
 
                 val roomName = all.findRoom(session.roomId!!)?.name?.let { roomName ->
                     subtitle += " — $roomName"
 //                    session.roomName = roomName
                 }
+                println("1")
 
 //                session.startsAtDate = parseDate(session.startsAt)
 //                session.endsAtDate = parseDate(session.endsAt)

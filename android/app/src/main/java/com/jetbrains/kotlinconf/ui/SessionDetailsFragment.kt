@@ -19,7 +19,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import org.jetbrains.kotlinconf.*
-import org.jetbrains.kotlinconf.model.SessionRating
+import org.jetbrains.kotlinconf.data.SessionRating
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
@@ -30,6 +30,7 @@ import org.jetbrains.anko.design.floatingActionButton
 import org.jetbrains.anko.design.themedAppBarLayout
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.nestedScrollView
+import org.jetbrains.kotlinconf.utils.*
 
 class SessionDetailsFragment : Fragment() {
 

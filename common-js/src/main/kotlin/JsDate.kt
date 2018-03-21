@@ -1,4 +1,4 @@
-package org.jetbrains.kotlinconf
+package org.jetbrains.kotlinconf.utils
 
 actual external class Date {
     actual constructor()
@@ -17,16 +17,16 @@ actual external class Date {
     }
 }
 
-actual operator fun Date.compareTo(otherDate: Date) = getTime().toLong().compareTo(otherDate.getTime().toLong())
+actual operator fun org.jetbrains.kotlinconf.utils.Date.compareTo(otherDate: org.jetbrains.kotlinconf.utils.Date) = getTime().toLong().compareTo(otherDate.getTime().toLong())
 
-actual fun parseDate(dateString: String): Date = Date(Date.parse(dateString))
+actual fun parseDate(dateString: String): org.jetbrains.kotlinconf.utils.Date = Date(Date.parse(dateString))
 
-actual fun Date.toReadableDateString(): String {
+actual fun org.jetbrains.kotlinconf.utils.Date.toReadableDateString(): String {
     return "${monthAsString()} ${getDate()}, ${getFullYear()}"
 }
 
-actual fun Date.toReadableTimeString(): String = "${readableHours()}:${getMinutes().asMinutesString()} ${timeSuffix()}"
+actual fun org.jetbrains.kotlinconf.utils.Date.toReadableTimeString(): String = "${readableHours()}:${getMinutes().asMinutesString()} ${timeSuffix()}"
 
-private fun Date.monthAsString(): String = months[getMonth()]
+private fun org.jetbrains.kotlinconf.utils.Date.monthAsString(): String = months[getMonth()]
 
 private val months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")

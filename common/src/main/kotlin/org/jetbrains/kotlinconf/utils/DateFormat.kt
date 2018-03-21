@@ -1,4 +1,4 @@
-package org.jetbrains.kotlinconf
+package org.jetbrains.kotlinconf.utils
 
 fun Pair<Date, Date>.toReadableString(): String {
     val (from, to) = this

@@ -26,6 +26,7 @@ repositories {
     maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
     maven { url "http://dl.bintray.com/kotlinx/kotlinx" }
     maven { url "http://dl.bintray.com/hypnosphi/kotlin-wrappers" }
+    maven { url 'https://dl.bintray.com/e5l/http-client-common' }
     mavenCentral()
 }
 
@@ -35,6 +36,7 @@ dependencies {
     compile("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version") { force = true }
     compile "org.jetbrains:kotlin-react:$react_version"
     compile "org.jetbrains:kotlin-react-dom:$react_dom_version"
+    compile "io.ktor.common.client:http-client-browser:$http_client_version"
 }
 
 compileKotlin2Js {

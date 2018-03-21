@@ -1,9 +1,9 @@
 package org.jetbrains.kotlinconf.components
 
-import org.jetbrains.kotlinconf.Date
-import org.jetbrains.kotlinconf.parseDate
-import org.jetbrains.kotlinconf.toReadableDateTimeString
-import org.jetbrains.kotlinconf.toReadableString
+import org.jetbrains.kotlinconf.utils.Date
+import org.jetbrains.kotlinconf.utils.parseDate
+import org.jetbrains.kotlinconf.utils.toReadableDateTimeString
+import org.jetbrains.kotlinconf.utils.toReadableString
 import kotlinext.js.clone
 import kotlinext.js.jsObject
 import react.RBuilder
