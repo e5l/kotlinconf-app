@@ -9,12 +9,14 @@ import kotlinx.serialization.KOutput
 import kotlinx.serialization.KSerialClassDesc
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.MissingFieldException
+import kotlinx.serialization.Optional
 import kotlinx.serialization.internal.IntSerializer
 import kotlinx.serialization.internal.NullableSerializer
 import kotlinx.serialization.internal.SerialClassDescImplTagged
 import kotlinx.serialization.internal.StringSerializer
 
-data class Favorite(var sessionId: String? = null) {
+data class Favorite(@Optional
+var sessionId: String? = null) {
     @Suppress("NAME_SHADOWING")
     object serializer : KSerializer<Favorite> {
         override val serialClassDesc: KSerialClassDesc =
@@ -48,7 +50,7 @@ data class Favorite(var sessionId: String? = null) {
             }
             input.readEnd(serialClassDesc)
             if (bitMask and 1 == 0) {
-                throw MissingFieldException("sessionId")
+                local0 = null
             }
             return Favorite(local0)
         }
@@ -194,7 +196,9 @@ data class Room(
     }
 }
 
-data class Vote(var sessionId: String? = null, var rating: Int? = null) {
+data class Vote(@Optional
+var sessionId: String? = null, @Optional
+var rating: Int? = null) {
     @Suppress("NAME_SHADOWING")
     object serializer : KSerializer<Vote> {
         override val serialClassDesc: KSerialClassDesc =
@@ -235,10 +239,10 @@ data class Vote(var sessionId: String? = null, var rating: Int? = null) {
             }
             input.readEnd(serialClassDesc)
             if (bitMask and 1 == 0) {
-                throw MissingFieldException("sessionId")
+                local0 = null
             }
             if (bitMask and 2 == 0) {
-                throw MissingFieldException("rating")
+                local1 = null
             }
             return Vote(local0, local1)
         }

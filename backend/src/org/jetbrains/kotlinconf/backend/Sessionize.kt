@@ -1,6 +1,5 @@
 package org.jetbrains.kotlinconf.backend
 
-import com.github.salomonbrys.kotson.*
 import io.ktor.application.*
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -8,7 +7,6 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.experimental.*
 import org.jetbrains.kotlinconf.data.*
-import java.text.*
 import java.time.*
 import java.util.*
 import java.util.concurrent.*
@@ -48,7 +46,7 @@ fun Application.launchSyncJob() {
             log.trace("Synchronizing to Sessionize…")
             val client = HttpClient(CIO)
             val text = client.get<String>(url)
-            var data = gson.fromJson<AllData>(text)
+            var data = kjson.parse<AllData>(text)
             data = data.copy(sessions = data.sessions?.plus(fakeVotingSession))
             log.trace("Finished loading data from Sessionize.")
             sessionizeData = SessionizeData(data)

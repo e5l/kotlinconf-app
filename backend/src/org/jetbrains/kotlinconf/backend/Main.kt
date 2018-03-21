@@ -1,6 +1,5 @@
 package org.jetbrains.kotlinconf.backend
 
-import com.google.gson.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.content.*
@@ -13,11 +12,7 @@ import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.serialization.json.*
 
-val gson = GsonBuilder().apply {
-    setPrettyPrinting()
-    serializeNulls()
-    GsonDateDeserializer.register(this)
-}.create()
+val kjson = JSON(nonstrict = true)
 
 fun Application.main() {
     val config = environment.config.config("service")

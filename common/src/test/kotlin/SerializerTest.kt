@@ -1,6 +1,6 @@
 package org.jetbrains.kotlinconf
 
-import kotlinx.serialization.json.JSON
+import kotlinx.serialization.json.*
 import org.jetbrains.kotlinconf.data.AllData
 import org.jetbrains.kotlinconf.data.Room
 import kotlin.test.Test
@@ -86,7 +86,6 @@ class SerializerTest {
             val date = sessions!!.first().startsAt
             assertNotNull(date)
             with(date!!) {
-                println(this.toReadableDateTimeString())
                 assertEquals(2017, getFullYear())
                 assertEquals(10, getMonth())
                 assertEquals(2, getDate())

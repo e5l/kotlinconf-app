@@ -1,6 +1,5 @@
 package org.jetbrains.kotlinconf.backend
 
-import org.jetbrains.kotlinconf.data.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
@@ -11,6 +10,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.experimental.channels.*
+import org.jetbrains.kotlinconf.data.*
 import org.jetbrains.kotlinconf.util.*
 import java.time.*
 import java.time.format.*
@@ -236,8 +236,7 @@ fun Routing.wsVotes(database: Database, production: Boolean) {
         val id = call.parameters["sessionId"] ?: fakeSessionId
         trackSession(id).openSubscription().use { subscription ->
             subscription.consumeEach {
-
-                outgoing.send(Frame.Text(gson.toJson(database.getVotesSummary(id))))
+                outgoing.send(Frame.Text(kjson.stringify(database.getVotesSummary(id))))
             }
         }
     }

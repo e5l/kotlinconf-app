@@ -2,7 +2,6 @@ package org.jetbrains.kotlinconf
 
 import org.jetbrains.kotlinconf.data.*
 import org.jetbrains.kotlinconf.util.*
-import io.ktor.common.client.*
 
 class SessionModel(
         var id: String,
@@ -16,7 +15,6 @@ class SessionModel(
 ) {
     companion object {
         fun forSession(all: AllData, sessionId: String): SessionModel? {
-            val client = HttpClient()
             val briefSession = all.sessions?.firstOrNull { it.id == sessionId } ?: return null
             val speakerMap = all.speakers?.associateBy { it.id } ?: emptyMap()
             val roomMap = all.rooms?.associateBy { it.id } ?: emptyMap()

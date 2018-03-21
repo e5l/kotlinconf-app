@@ -3,14 +3,13 @@ package org.jetbrains.kotlinconf.model
 import android.arch.lifecycle.*
 import android.content.*
 import android.content.Context.*
-import com.google.gson.*
 import kotlinx.coroutines.experimental.*
+import kotlinx.serialization.json.*
 import org.jetbrains.anko.*
 import org.jetbrains.kotlinconf.*
 import org.jetbrains.kotlinconf.api.*
 import org.jetbrains.kotlinconf.data.*
 import java.io.*
-import java.security.SecureRandom
 
 const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
@@ -19,10 +18,8 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
     lateinit var userId: String
     var onError: ((action: Error) -> Unit)? = null
 
-    private val gson: Gson by lazy {
-        GsonBuilder()
-                .setDateFormat(DATE_FORMAT)
-                .create()
+    private val kjson: JSON by lazy {
+        JSON(nonstrict = true)
     }
 
     private val kotlinConfApi: KotlinConfApi by lazy { KotlinConfApi(userId) }
@@ -191,7 +188,7 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
         val allDataFile = File(context.filesDir, CACHED_DATA_FILE_NAME)
         allDataFile.delete()
         allDataFile.createNewFile()
-        allDataFile.writeText(gson.toJson(allData))
+        allDataFile.writeText(kjson.stringify(allData))
         _data.value = allData
     }
 
@@ -201,8 +198,7 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
             return false
         }
 
-        val allData = gson.fromJson<AllData>(allDataFile.readText(),
-                AllData::class.java) ?: return false
+        val allData = kjson.parse<AllData>(allDataFile.readText()) ?: return false
 
         _data.value = allData
 
@@ -231,8 +227,8 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
             syncLocalFavorites(allData)
             syncLocalRatings(allData)
             updateLocalData(allData)
-        } catch (casue: Throwable) {
-            warn("Failed to get data from server", it.exception )
+        } catch (cause: Throwable) {
+            warn("Failed to get data from server", cause)
             onError?.invoke(Error.FAILED_TO_GET_DATA)
         }
         _isUpdating.value = false
