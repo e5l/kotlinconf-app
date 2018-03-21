@@ -1,38 +1,18 @@
 package org.jetbrains.kotlinconf.backend
 
-import com.google.gson.GsonBuilder
 import io.ktor.application.*
-import io.ktor.auth.Principal
-import io.ktor.auth.authentication
-import io.ktor.cio.toByteArray
-import io.ktor.content.TextContent
-import io.ktor.content.default
-import io.ktor.content.files
-import io.ktor.content.static
+import io.ktor.auth.*
+import io.ktor.content.*
 import io.ktor.features.*
-import io.ktor.gson.GsonConverter
 import io.ktor.http.*
-import io.ktor.pipeline.PipelineContext
-import io.ktor.request.ApplicationReceiveRequest
-import io.ktor.request.contentCharset
-import io.ktor.request.header
-import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.Routing
-import io.ktor.util.error
-import io.ktor.websocket.WebSockets
-import kotlinx.coroutines.experimental.io.ByteReadChannel
-import kotlinx.coroutines.experimental.io.jvm.javaio.toInputStream
-import kotlinx.serialization.json.JSON
-import kotlinx.serialization.serializerByClass
-import kotlinx.serialization.serializerByValue
-import org.jetbrains.kotlinconf.GsonDateDeserializer
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import io.ktor.util.*
+import io.ktor.websocket.*
+import kotlinx.serialization.json.*
 
-val gson = GsonBuilder().apply {
-    setPrettyPrinting()
-    serializeNulls()
-    GsonDateDeserializer.register(this)
-}.create()
+val kjson = JSON(nonstrict = true)
 
 fun Application.main() {
     val config = environment.config.config("service")

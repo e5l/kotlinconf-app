@@ -4,7 +4,6 @@ import org.jetbrains.kotlinconf.data.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
-import io.ktor.gson.*
 import io.ktor.http.*
 import io.ktor.pipeline.*
 import io.ktor.request.*
@@ -12,10 +11,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.experimental.channels.*
-import org.jetbrains.kotlinconf.*
 import java.time.*
-import java.time.format.*
-import java.util.*
 import java.util.concurrent.*
 
 fun Routing.api(database: Database, production: Boolean) {
@@ -238,7 +234,7 @@ fun Routing.wsVotes(database: Database, production: Boolean) {
         trackSession(id).openSubscription().use { subscription ->
             subscription.consumeEach {
 
-                outgoing.send(Frame.Text(gson.toJson(database.getVotesSummary(id))))
+                outgoing.send(Frame.Text(kjson.stringify(database.getVotesSummary(id))))
             }
         }
     }

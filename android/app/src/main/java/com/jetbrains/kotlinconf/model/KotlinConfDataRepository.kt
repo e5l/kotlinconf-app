@@ -6,14 +6,12 @@ import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import org.jetbrains.kotlinconf.*
 import org.jetbrains.kotlinconf.api.KotlinConfApi
-import org.jetbrains.kotlinconf.api.KotlinConfApi.Companion.DATE_FORMAT
 import org.jetbrains.kotlinconf.data.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
+import kotlinx.serialization.json.JSON
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.warn
 import ru.gildor.coroutines.retrofit.awaitResult
@@ -24,10 +22,8 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
     lateinit var userId: String
     var onError: ((action: Error) -> Unit)? = null
 
-    private val gson: Gson by lazy {
-        GsonBuilder()
-            .setDateFormat(DATE_FORMAT)
-            .create()
+    private val kjson: JSON by lazy {
+        JSON(nonstrict = true)
     }
 
     private val kotlinConfApi: KotlinConfApi by lazy {
@@ -206,7 +202,7 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
         val allDataFile = File(context.filesDir, CACHED_DATA_FILE_NAME)
         allDataFile.delete()
         allDataFile.createNewFile()
-        allDataFile.writeText(gson.toJson(allData))
+        allDataFile.writeText(kjson.stringify(allData))
         _data.value = allData
     }
 
@@ -216,8 +212,7 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
             return false
         }
 
-        val allData = gson.fromJson<AllData>(allDataFile.readText(),
-                AllData::class.java) ?: return false
+        val allData = kjson.parse<AllData>(allDataFile.readText()) ?: return false
 
         _data.value = allData
 

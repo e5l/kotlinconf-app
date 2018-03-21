@@ -7,19 +7,26 @@ import kotlinx.serialization.KInput
 import kotlinx.serialization.KOutput
 import kotlinx.serialization.KSerialClassDesc
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.MissingFieldException
+import kotlinx.serialization.Optional
 import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.NullableSerializer
 import kotlinx.serialization.internal.SerialClassDescImplTagged
 
 data class AllData(
-        val sessions: List<Session>?,
-        val rooms: List<Room>?,
-        val speakers: List<Speaker>?,
-        val questions: List<Question>?,
-        val categories: List<Category>?,
-        val favorites: List<Favorite>?,
-        val votes: List<Vote>?
+        @Optional
+        var sessions: List<Session>? = null,
+        @Optional
+        var rooms: List<Room>? = null,
+        @Optional
+        var speakers: List<Speaker>? = null,
+        @Optional
+        var questions: List<Question>? = null,
+        @Optional
+        var categories: List<Category>? = null,
+        @Optional
+        var favorites: List<Favorite>? = null,
+        @Optional
+        var votes: List<Vote>? = null
 ) {
     @Suppress("NAME_SHADOWING")
     object serializer : KSerializer<AllData> {
@@ -96,25 +103,25 @@ data class AllData(
             }
             input.readEnd(serialClassDesc)
             if (bitMask and 1 == 0) {
-                throw MissingFieldException("sessions")
+                local0 = null
             }
             if (bitMask and 2 == 0) {
-                throw MissingFieldException("rooms")
+                local1 = null
             }
             if (bitMask and 4 == 0) {
-                throw MissingFieldException("speakers")
+                local2 = null
             }
             if (bitMask and 8 == 0) {
-                throw MissingFieldException("questions")
+                local3 = null
             }
             if (bitMask and 16 == 0) {
-                throw MissingFieldException("categories")
+                local4 = null
             }
             if (bitMask and 32 == 0) {
-                throw MissingFieldException("favorites")
+                local5 = null
             }
             if (bitMask and 64 == 0) {
-                throw MissingFieldException("votes")
+                local6 = null
             }
             return AllData(local0, local1, local2, local3, local4, local5, local6)
         }

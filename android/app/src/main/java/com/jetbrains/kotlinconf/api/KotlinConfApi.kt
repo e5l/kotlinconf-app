@@ -1,20 +1,12 @@
 package org.jetbrains.kotlinconf.api
 
-import com.google.gson.GsonBuilder
-import okhttp3.OkHttpClient
-import okhttp3.RequestBody
-import okhttp3.ResponseBody
-import org.jetbrains.kotlinconf.GsonDateDeserializer
-import org.jetbrains.kotlinconf.data.AllData
-import org.jetbrains.kotlinconf.data.Favorite
-import org.jetbrains.kotlinconf.data.Vote
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.*
+import kotlinx.serialization.json.*
+import okhttp3.*
+import org.jetbrains.kotlinconf.data.*
+import retrofit2.*
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.HTTP
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface KotlinConfApi {
     @GET("all")
@@ -41,10 +33,6 @@ interface KotlinConfApi {
         const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
         fun create(userId: String): KotlinConfApi {
-            val gson = GsonBuilder().apply {
-                setDateFormat(DATE_FORMAT)
-                GsonDateDeserializer.register(this)
-            }.create()
 
             val client = OkHttpClient.Builder().addInterceptor { chain ->
                 val newRequest = chain.request()
@@ -55,10 +43,13 @@ interface KotlinConfApi {
                 chain.proceed(newRequest)
             }.build()
 
+            val contentType = MediaType.parse("application/json")!!
+            val json = JSON(nonstrict = true)
+
             val retrofit = Retrofit.Builder()
                 .client(client)
                 .baseUrl(KotlinConfApi.END_POINT)
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(stringBased(contentType, json::parse, json::stringify))
                 .build()
 
             return retrofit.create(KotlinConfApi::class.java)

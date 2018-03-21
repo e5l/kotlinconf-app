@@ -1,6 +1,4 @@
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.ParameterizedTypeName
-import com.squareup.kotlinpoet.asTypeName
+import com.squareup.kotlinpoet.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import kotlinx.serialization.sourcegen.*
@@ -53,10 +51,11 @@ class Generator(val outputDir: File) {
     private lateinit var fav: ClassName
     private lateinit var vote: ClassName
 
-    private fun SClass.setableProperty(name: String, type: ClassName) {
+    private fun SClass.setableProperty(name: String, type: TypeName) {
         assert(type.nullable)
         property(name, type) {
             defaultValue = "null"
+            optional = true
             mutable = true
         }
     }
@@ -149,13 +148,13 @@ class Generator(val outputDir: File) {
     private fun genAll() {
         saveFile(outputDir, pkg, "AllData") {
             serializableClass("AllData") {
-                property("sessions", session.listify())
-                property("rooms", room.listify())
-                property("speakers", speaker.listify())
-                property("questions", qRef.listify())
-                property("categories", category.listify())
-                property("favorites", fav.listify())
-                property("votes", vote.listify())
+                setableProperty("sessions", session.listify())
+                setableProperty("rooms", room.listify())
+                setableProperty("speakers", speaker.listify())
+                setableProperty("questions", qRef.listify())
+                setableProperty("categories", category.listify())
+                setableProperty("favorites", fav.listify())
+                setableProperty("votes", vote.listify())
             }
         }
     }
