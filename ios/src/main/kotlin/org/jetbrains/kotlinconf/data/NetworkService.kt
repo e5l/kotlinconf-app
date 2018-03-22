@@ -3,8 +3,11 @@ package org.jetbrains.kotlinconf.data
 import libs.*
 import kotlinx.cinterop.*
 import org.jetbrains.kotlinconf.util.*
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 
 import platform.Foundation.*
+import platform.darwin.NSObjectMeta
 
 interface NetworkService {
     val baseUrl: String
@@ -72,6 +75,41 @@ fun NetworkService.jsonRequest(request: NSURLRequest, handler: (Any) -> Unit) {
         if (deserializedData != null) {
             handler(deserializedData)
         } else {
+            errorHandler(NetworkServiceError.JSON_PARSING_ERROR.toNSError())
+        }
+    }).resume()
+}
+
+private fun NSData.decode(encoding: NSStringEncoding = NSUTF8StringEncoding): String {
+    val nsStringMeta: NSObjectMeta = NSString
+    val result = nsStringMeta.alloc()!!.reinterpret<NSString>()
+    return result.initWithData(this, encoding)!!
+}
+
+
+fun <T> NetworkService.jsonTypedRequest(request: NSURLRequest, deserializer: KSerializer<T>, handler: (T) -> Unit) {
+    val session = NSURLSession.sessionWithConfiguration(NSURLSessionConfiguration.defaultSessionConfiguration,
+            delegate = null, delegateQueue = NSOperationQueue.mainQueue)
+
+    log("Sending JSON request: " + request.URL)
+
+    session.dataTask(request, { data, _, error ->
+        assert(NSThread.isMainThread)
+
+        if (error != null) {
+            errorHandler(error)
+            return@dataTask
+        }
+
+        if (data == null) {
+            errorHandler(NetworkServiceError.EMPTY_BODY.toNSError())
+            return@dataTask
+        }
+
+        try {
+            val deserializedData = JSON(nonstrict = true).parse(deserializer, data.decode())
+            handler(deserializedData)
+        } catch (_: SerializationException) {
             errorHandler(NetworkServiceError.JSON_PARSING_ERROR.toNSError())
         }
     }).resume()

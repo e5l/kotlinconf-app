@@ -2,6 +2,8 @@ package org.jetbrains.kotlinconf.data
 
 import libs.*
 import kotlinx.cinterop.*
+import kotlinx.serialization.json.*
+import org.jetbrains.kotlinconf.model.*
 import org.jetbrains.kotlinconf.util.*
 import platform.Foundation.*
 
@@ -28,7 +30,7 @@ class KonfService(override val errorHandler: (NSError) -> Unit) : NetworkService
     }
 
     override val baseUrl = "https://api.kotlinconf.com"
-
+    
     fun registerUser(uuid: String, onComplete: () -> Unit = {}) {
         val request = OMGHTTPURLRQ.POST(url("/users"), rawText = uuid)
         plainRequest(request, OK_STATUS_CODES + listOf(kHTTPStatusCodeConflict), { onComplete() })
@@ -93,10 +95,13 @@ class KonfService(override val errorHandler: (NSError) -> Unit) : NetworkService
         }
     }
 
-    fun getSessions(uuid: String, onComplete: (NSDictionary) -> Unit) {
-        jsonRequest(OMGHTTPURLRQ.GET(url("/all"), null, error = null)!!.acceptsJson().auth(uuid)) { data ->
-            onComplete(data.uncheckedCast<NSDictionary>())
-        }
+    fun getSessions(uuid: String, onComplete: (AllData) -> Unit) {
+//        jsonTypedRequest(
+//                OMGHTTPURLRQ.GET(url("/all"), null, error = null)!!.acceptsJson().auth(uuid),
+//                AllData.serializer(),
+//                onComplete
+//        )
+        onComplete(JSON.Companion.parse(AllData.serializer(), fakeData))
     }
 }
 
@@ -118,3 +123,63 @@ private fun NSMutableURLRequest.auth(uuid: String): NSMutableURLRequest {
     addValue("Bearer $uuid", forHTTPHeaderField = "Authorization")
     return this
 }
+
+private val fakeData = """{
+	"sessions": [
+		{
+			"id": "12775",
+			"isServiceSession": false,
+			"isPlenumSession": true,
+			"questionAnswers": [],
+			"speakers": [
+				"9671b9b6-771a-4df2-b800-1298c43b0a3b"
+			],
+			"description": "A nice collection of awesome things! ",
+			"startsAt": "2017-11-02T09:00:00",
+			"title": "Opening Keynote",
+			"endsAt": "2017-11-02T10:00:00",
+			"categoryItems": [
+				1819
+			],
+			"roomId": 220
+		}],
+"rooms": [
+		{
+			"name": "St. Petersburg",
+			"id": 220,
+			"sort": 0
+		},
+		{
+			"name": "Munich",
+			"id": 221,
+			"sort": 1
+		}],
+"speakers": null,
+"questions": [],
+"categories": [
+		{
+			"id": 459,
+			"sort": 0,
+			"title": "Level",
+			"items": [
+				{
+					"name": "Intermediate",
+					"id": 1820,
+					"sort": 1
+				},
+				{
+					"name": "Advanced",
+					"id": 1821,
+					"sort": 2
+				},
+				{
+					"name": "Introductory and overview",
+					"id": 1819,
+					"sort": 3
+				}
+			]
+		}
+	],
+"favorites": null,
+"votes": null
+}"""

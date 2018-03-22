@@ -10,18 +10,7 @@ class FavoritesManager {
     fun isFavorite(session: Session) = getFavorite(session) != null
 
     private fun getFavorite(session: Session): Favorite? {
-        val moc = appDelegate.managedObjectContext
-
-        val request = NSFetchRequest(entityName = "Favorite")
-        request.fetchLimit = 1
-        request.predicate = NSPredicate.predicateWithFormat(
-                "sessionId == %@",
-                argumentArray = nsArrayOf(session.id!!.toNSString())
-        )
-
-        return attempt(null) {
-            moc.executeFetchRequest(request).firstObject?.uncheckedCast<Favorite>()
-        }
+        return AppContext.localFavorites.firstOrNull { it.sessionId == session.id }
     }
 
     fun toggleFavorite(
@@ -43,35 +32,15 @@ class FavoritesManager {
     }
 
     private fun setLocalFavorite(session: Session, isFavorite: Boolean) {
-        val moc = appDelegate.managedObjectContext
-
         val favorite = getFavorite(session)
         if (favorite != null && !isFavorite) {
-            moc.deleteObject(favorite.uncheckedCast())
+            AppContext.localFavorites.remove(favorite)
         } else if (isFavorite) {
-            val favoriteItem = NSEntityDescription
-                    .insertNewObjectForEntityForName("Favorite", inManagedObjectContext = moc)
-                    .uncheckedCast<Favorite>()
-
-            favoriteItem.sessionId = session.id
+            AppContext.localFavorites.add(Favorite(session.id))
         }
-
-        moc.save()
     }
 
-    fun getFavoriteItemIds(): NSArray {
-        val moc = appDelegate.managedObjectContext
-
-        var favorites: List<Favorite> = emptyList()
-        attempt(null) {
-            favorites = moc.executeFetchRequest(NSFetchRequest(entityName = "Favorite")).toList()
-        }
-
-        val idsArray = NSMutableArray.arrayWithCapacity(favorites.size.toLong())
-        for (favoriteItem in favorites) {
-            idsArray.addObject(favoriteItem.sessionId!!.toNSString())
-        }
-
-        return idsArray
+    fun getFavoriteSessionIds(): List<String> {
+        return AppContext.localFavorites.map { it.sessionId }.filterNotNull()
     }
 }

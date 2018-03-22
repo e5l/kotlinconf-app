@@ -192,25 +192,12 @@ class SessionViewController(aDecoder: NSCoder) : UIViewController(aDecoder) {
 }
 
 fun SessionViewController.fetchRoom(): Room? {
-    val moc = appDelegate.managedObjectContext
-
-    val request = NSFetchRequest.fetchRequestWithEntityName("KRoom")
-    request.predicate = NSPredicate.predicateWithFormat("id == %d",
-            argumentArray = NSArray.arrayWithObject(NSNumber.numberWithInteger(session.roomId!!.toLong())))
-    request.fetchLimit = 1
-
-    return moc.executeFetchRequest(request, error = null)?.firstObject?.uncheckedCast<Room>()
+    return AppContext.allData?.rooms?.firstOrNull { it.id == session.roomId }
 }
 
 fun SessionViewController.fetchSpeakers(): List<Speaker> {
-    val moc = appDelegate.managedObjectContext
 
-    val request = NSFetchRequest.fetchRequestWithEntityName("KSpeaker")
-    request.predicate = NSPredicate.predicateWithFormat(
-            "id IN %@", argumentArray = nsArrayOf(session.speakers.uncheckedCast())
-    )
-
-    val unsortedSpeakers = moc.executeFetchRequest(request, error = null).toList<Speaker>()
+    val unsortedSpeakers = AppContext.allData?.speakers?.filter { it.id in session.speakers!! }.orEmpty()
 
     val sortedSpeakers = mutableListOf<Speaker>()
     for (speakerId in session.speakers!!) {
@@ -226,15 +213,8 @@ fun SessionViewController.fetchSpeakers(): List<Speaker> {
 fun SessionViewController.fetchCategoryItems(): List<CategoryItem> {
     if ((session.categoryItems?.count() ?: 0L) == 0L) return emptyList()
 
-    val moc = appDelegate.managedObjectContext
-
-    val request = NSFetchRequest.fetchRequestWithEntityName("KCategoryItem")
-    request.predicate = NSPredicate.predicateWithFormat(
-            "id IN %@", argumentArray = nsArrayOf(session.categoryItems.uncheckedCast())
-    )
-    request.sortDescriptors = nsArrayOf(NSSortDescriptor.sortDescriptorWithKey("id", ascending = true))
-
-    return moc.executeFetchRequest(request, error = null).toList()
+    val allItems: List<CategoryItem?> = AppContext.allData?.categories?.flatMap { it.items.orEmpty() }.orEmpty()
+    return allItems.filterNotNull().filter { it.id in session.categoryItems!! }.sortedBy { it.id!! }
 }
 
 class SessionUserTableViewCell(aDecoder: NSCoder) : UITableViewCell(aDecoder) {

@@ -22,12 +22,6 @@ class AppDelegate : UIResponder(), UIApplicationDelegateProtocol {
 
     private var _window: UIWindow? = null
 
-    val managedObjectContext: NSManagedObjectContext by lazy {
-        val managedObjectContext = NSManagedObjectContext(NSMainQueueConcurrencyType)
-        managedObjectContext.persistentStoreCoordinator = persistentStoreCoordinator
-        managedObjectContext
-    }
-
     // Should be already set in `generateUuidIfNeeded`
     val userUuid: String
         get() = NSUserDefaults.standardUserDefaults.stringForKey(UUID_KEY)!!
@@ -36,32 +30,6 @@ class AppDelegate : UIResponder(), UIApplicationDelegateProtocol {
         NSFileManager.defaultManager
                 .URLsForDirectory(NSDocumentDirectory, inDomains = NSUserDomainMask)
                 .lastObject!!.uncheckedCast<NSURL>()
-    }
-
-    private val managedObjectModel: NSManagedObjectModel by lazy {
-        val modelURL = NSBundle.mainBundle.URLForResource("konfswift", withExtension = "momd")!!
-        NSManagedObjectModel(modelURL)
-    }
-
-    private val persistentStoreCoordinator: NSPersistentStoreCoordinator by lazy {
-        val coordinator = NSPersistentStoreCoordinator(managedObjectModel)
-        val url = applicationDocumentsDirectory.URLByAppendingPathComponent("konfswift.sqlite")
-
-        try {
-            nsTry { errorPtr ->
-                coordinator.addPersistentStoreWithType(
-                        /*NSSQLiteStoreType*/ storeType = "SQLite",
-                        configuration = null, URL = url, options = null,
-                        error = errorPtr
-                )
-            }
-        } catch (cause: NSErrorException) {
-            val wrappedError = NSError.errorWithDomain("KonfSwift", code = 9999, userInfo = null)
-            log("Unresolved error $wrappedError")
-            exitProcess(0)
-        }
-
-        coordinator
     }
 
     override fun init() = initBy(AppDelegate())
@@ -99,9 +67,7 @@ class AppDelegate : UIResponder(), UIApplicationDelegateProtocol {
     }
 
     private fun saveContext() {
-        if (managedObjectContext.hasChanges) {
-            managedObjectContext.save(null)
-        }
+        // TODO: save app context
     }
 }
 
