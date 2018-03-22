@@ -1,13 +1,13 @@
 package org.jetbrains.kotlinconf
 
 import android.app.Application
-import org.jetbrains.kotlinconf.api.KotlinConfApi
+import kotlinx.coroutines.experimental.*
 import org.jetbrains.kotlinconf.model.KotlinConfDataRepository
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import org.jetbrains.anko.*
+import org.jetbrains.kotlinconf.api.*
 import retrofit2.Retrofit
 import ru.gildor.coroutines.retrofit.awaitResult
 import java.util.*
@@ -45,8 +45,12 @@ class KotlinConfApplication : Application(), AnkoLogger {
                 repository.update()
             }
 
+            val userIsNew = withContext(CommonPool) {
+                KotlinConfApi.createUser(userId)
+            }
+
             // Get new data from server if new user was created (server db was cleaned)
-            if (postUserId(userId) && dataLoaded) {
+            if (userIsNew && dataLoaded) {
                 repository.update()
             }
         }
@@ -66,32 +70,7 @@ class KotlinConfApplication : Application(), AnkoLogger {
         return userId
     }
 
-    private suspend fun postUserId(userId: String): Boolean {
-        val retrofit = Retrofit.Builder()
-                .baseUrl(KotlinConfApi.END_POINT)
-                .build()
-
-        val service = retrofit.create(KotlinConfApi::class.java)
-        service.postUserId(RequestBody.create(MediaType.parse("text/plain"), userId.toByteArray()))
-                .awaitResult()
-                .ifSucceeded {
-                    info("User successfully created")
-                    return true
-                }
-                .ifError { code ->
-                    if (code == 409) {
-                        info("User already exists")
-                        return false
-                    }
-                }
-                .ifException {
-                    warn("Failed to post user id, network problem")
-                    return false
-                }
-
-        warn("Failed to post user id, unknown error")
-        return false
-    }
+    private suspend fun postUserId(userId: String): Boolean = KotlinConfApi.createUser(userId)
 
     companion object {
         const val USER_ID_KEY = "UserId"

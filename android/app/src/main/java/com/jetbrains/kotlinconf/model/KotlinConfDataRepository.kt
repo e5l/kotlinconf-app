@@ -1,23 +1,18 @@
 package org.jetbrains.kotlinconf.model
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.MutableLiveData
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import android.arch.lifecycle.*
+import android.content.*
+import android.content.Context.*
+import com.google.gson.*
+import kotlinx.coroutines.experimental.*
+import org.jetbrains.anko.*
 import org.jetbrains.kotlinconf.*
-import org.jetbrains.kotlinconf.api.KotlinConfApi
-import org.jetbrains.kotlinconf.api.KotlinConfApi.Companion.DATE_FORMAT
+import org.jetbrains.kotlinconf.api.*
 import org.jetbrains.kotlinconf.data.*
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.launch
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.warn
-import ru.gildor.coroutines.retrofit.awaitResult
-import java.io.File
+import java.io.*
+import java.security.SecureRandom
+
+const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
 class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
 
@@ -25,14 +20,13 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
     var onError: ((action: Error) -> Unit)? = null
 
     private val gson: Gson by lazy {
+        SecureRandom.getInstance()
         GsonBuilder()
-            .setDateFormat(DATE_FORMAT)
-            .create()
+                .setDateFormat(DATE_FORMAT)
+                .create()
     }
 
-    private val kotlinConfApi: KotlinConfApi by lazy {
-        KotlinConfApi.create(userId)
-    }
+    private val kotlinConfApi: KotlinConfApi by lazy { KotlinConfApi(userId) }
 
     private val favoritePreferences: SharedPreferences by lazy {
         context.getSharedPreferences(FAVORITES_PREFERENCES_NAME, MODE_PRIVATE)
@@ -107,11 +101,10 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
     suspend fun setFavorite(sessionId: String, isFavorite: Boolean) {
         if (isFavorite) {
             addLocalFavorite(sessionId)
-            kotlinConfApi.postFavorite(Favorite(sessionId)).awaitResult()
-        }
-        else {
+            kotlinConfApi.postFavorite(Favorite(sessionId))
+        } else {
             deleteLocalFavorite(sessionId)
-            kotlinConfApi.deleteFavorite(Favorite(sessionId)).awaitResult()
+            kotlinConfApi.deleteFavorite(Favorite(sessionId))
         }
     }
 
@@ -134,48 +127,41 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
     suspend fun addRating(sessionId: String, rating: SessionRating) {
         _ratings.value = getAllLocalRatings() + (sessionId to rating)
 
-        kotlinConfApi
-                .postVote(Vote(sessionId = sessionId, rating = rating.value))
-                .awaitResult()
-                .ifSucceeded {
-                    saveLocalRating(sessionId, rating)
-                }
-                .ifError { code ->
-                    _ratings.value = getAllLocalRatings()
-                    when (code) {
-                        HTTP_COME_BACK_LATER -> onError?.invoke(Error.EARLY_TO_VOTE)
-                        HTTP_TOO_LATE -> onError?.invoke(Error.LATE_TO_VOTE)
-                        else -> onError?.invoke(Error.FAILED_TO_POST_RATING)
-                    }
-                }
-                .ifException {
-                    _ratings.value = getAllLocalRatings()
-                    onError?.invoke(Error.FAILED_TO_POST_RATING)
-                }
+        try {
+            kotlinConfApi.postVote(Vote(sessionId = sessionId, rating = rating.value))
+            saveLocalRating(sessionId, rating)
+        } catch (cause: ApiException) {
+            _ratings.value = getAllLocalRatings()
+            when (cause.response.statusCode) {
+                HTTP_COME_BACK_LATER -> onError?.invoke(Error.EARLY_TO_VOTE)
+                HTTP_TOO_LATE -> onError?.invoke(Error.LATE_TO_VOTE)
+                else -> onError?.invoke(Error.FAILED_TO_POST_RATING)
+            }
+        } catch (cause: Throwable) {
+            onError?.invoke(Error.FAILED_TO_POST_RATING)
+        }
     }
 
     suspend fun removeRating(sessionId: String) {
         _ratings.value = getAllLocalRatings() - sessionId
-        kotlinConfApi
-                .deleteVote(Vote(sessionId = sessionId))
-                .awaitResult()
-                .ifSucceeded {
-                    deleteLocalRating(sessionId)
-                }
-                .ifFailed {
-                    _ratings.value = getAllLocalRatings()
-                    onError?.invoke(Error.FAILED_TO_DELETE_RATING)
-                }
+        try {
+            kotlinConfApi.deleteVote(Vote(sessionId = sessionId))
+            deleteLocalRating(sessionId)
+        } catch (cause: Throwable) {
+            _ratings.value = getAllLocalRatings()
+            onError?.invoke(Error.FAILED_TO_DELETE_RATING)
+        }
     }
 
     private fun syncLocalFavorites(allData: AllData) {
         val sessionIds = allData.favorites?.map { it.sessionId } ?: return
-        val favorites = favoritePreferences
-                .getStringSet(FAVORITES_KEY, mutableSetOf()).toMutableSet()
+        val favorites = favoritePreferences.getStringSet(FAVORITES_KEY, mutableSetOf()).toMutableSet()
 
         val missingOnServer = favorites - sessionIds
         launch(CommonPool) {
-            missingOnServer.forEach { kotlinConfApi.postFavorite(Favorite(it)).awaitResult() }
+            missingOnServer.forEach {
+                kotlinConfApi.postFavorite(Favorite(it))
+            }
         }
 
         favorites.addAll(sessionIds)
@@ -238,19 +224,19 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
 
         _isUpdating.value = true
 
-        kotlinConfApi
-                .getAll()
-                .awaitResult()
-                .ifSucceeded { allData ->
-                    syncLocalFavorites(allData)
-                    syncLocalRatings(allData)
-                    updateLocalData(allData)
-                }
-                .ifFailed {
-                    warn("Failed to get data from server")
-                    onError?.invoke(Error.FAILED_TO_GET_DATA)
-                }
+        try {
+            val allData = withContext(CommonPool) {
+                kotlinConfApi.getAll()
+            }
 
+            syncLocalFavorites(allData)
+            syncLocalRatings(allData)
+            updateLocalData(allData)
+        } catch (casue: Throwable) {
+            warn("Failed to get data from server")
+            onError?.invoke(Error.FAILED_TO_GET_DATA)
+
+        }
         _isUpdating.value = false
     }
 
