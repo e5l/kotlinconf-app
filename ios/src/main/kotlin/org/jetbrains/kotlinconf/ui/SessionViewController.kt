@@ -6,7 +6,6 @@ import org.jetbrains.kotlinconf.util.*
 import platform.UIKit.*
 import platform.Foundation.*
 import platform.CoreGraphics.*
-import platform.CoreData.*
 
 
 @ExportObjCClass
@@ -18,8 +17,9 @@ class SessionViewController(aDecoder: NSCoder) : UIViewController(aDecoder) {
                 SessionRating.BAD to Pair("bad", "bad_selected"))
     }
 
-    private val favoritesManager = FavoritesManager()
-    private val votesManager = VotesManager()
+    private val repository by lazy {
+        DataRepository(appDelegate.userUuid)
+    }
 
     lateinit var session: Session
 
@@ -119,7 +119,7 @@ class SessionViewController(aDecoder: NSCoder) : UIViewController(aDecoder) {
     }
 
     private fun highlightRatingButtons(rating: SessionRating? = null) {
-        val currentRating = rating ?: votesManager.getRating(session)
+        val currentRating = rating ?: repository.getRating(session)
 
         val buttons: Map<SessionRating, UIButton> = mapOf(
                 SessionRating.GOOD to goodButton,
@@ -138,7 +138,7 @@ class SessionViewController(aDecoder: NSCoder) : UIViewController(aDecoder) {
     }
 
     private fun updateFavoriteButtonTitle(isFavorite: Boolean? = null) {
-        val shouldCheck = isFavorite ?: favoritesManager.isFavorite(session)
+        val shouldCheck = isFavorite ?: repository.isFavorite(session)
         favoriteButton.image = UIImage.imageNamed(if (shouldCheck) "star_full" else "star_empty")
     }
 
@@ -146,7 +146,7 @@ class SessionViewController(aDecoder: NSCoder) : UIViewController(aDecoder) {
     fun favorited(sender: ObjCObject?) {
         val progressPopup = showIndeterminateProgress("Submitting…")
 
-        favoritesManager.toggleFavorite(session) {
+        repository.toggleFavorite(session) {
             progressPopup.hideAnimated(true)
             updateFavoriteButtonTitle(isFavorite = it)
         }
@@ -156,19 +156,19 @@ class SessionViewController(aDecoder: NSCoder) : UIViewController(aDecoder) {
         val progressPopup = showIndeterminateProgress("Submitting…")
 
         val errorHandler = createErrorHandler("Unable to send vote") { progressPopup.hideAnimated(true) }
-        val wrappedErrorHandler = { error: NSError ->
+        val wrappedErrorHandler = { error: Exception ->
             progressPopup.hideAnimated(true)
 
             when (error) {
-                VotesManager.EARLY_SUBMITTION_ERROR ->
+                DataRepository.EARLY_SUBMITTION_ERROR ->
                     showPopupText("The session has not started yet.")
-                VotesManager.LATE_SUBMITTION_ERROR ->
+                DataRepository.LATE_SUBMITTION_ERROR ->
                     showPopupText("You cannot vote for this session any longer.")
-                else -> errorHandler(error)
+                else -> errorHandler(NSError(error.message, code = 1, userInfo = null))
             }
         }
 
-        votesManager.setRating(session, rating, wrappedErrorHandler) { newRating ->
+        repository.setRating(session, rating, wrappedErrorHandler) { newRating ->
             progressPopup.hideAnimated(true)
             highlightRatingButtons(newRating)
             showPopupText(if (newRating != null) "Thank you for your feedback!" else "Your vote was removed.")

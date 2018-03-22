@@ -52,10 +52,7 @@ class AppDelegate : UIResponder(), UIApplicationDelegateProtocol {
     }
 
     private fun refreshBadgeStatus() {
-        val service = KonfService(errorHandler = { log(it.localizedDescription) })
-        service.shouldShowBadge { showBadge ->
-            NSUserDefaults.standardUserDefaults.setBool(showBadge, forKey = AboutViewController.SHOW_BADGE_KEY)
-        }
+        //todo: what is this?
     }
 
     private fun generateUuidIfNeeded() {

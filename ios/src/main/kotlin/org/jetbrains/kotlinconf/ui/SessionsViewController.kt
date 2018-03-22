@@ -1,11 +1,13 @@
 package org.jetbrains.kotlinconf.ui
 
+import io.ktor.common.client.*
 import kotlinx.cinterop.*
+import org.jetbrains.kotlinconf.api.*
 import org.jetbrains.kotlinconf.data.*
 import org.jetbrains.kotlinconf.util.*
-import platform.UIKit.*
-import platform.Foundation.*
 import platform.CoreData.*
+import platform.Foundation.*
+import platform.UIKit.*
 
 @ExportObjCClass
 @Suppress("CONFLICTING_OVERLOADS", "RETURN_TYPE_MISMATCH_ON_OVERRIDE", "RETURN_TYPE_MISMATCH_ON_INHERITANCE")
@@ -18,7 +20,9 @@ class SessionsViewController(aDecoder: NSCoder) :
         private val SEND_ID_ONCE_KEY = "sendIfOnce"
     }
 
-    private val favoritesManager = FavoritesManager()
+    private val repository by lazy {
+        DataRepository(appDelegate.userUuid)
+    }
 
     private var mode: SessionsListMode = SessionsListMode.ALL
 
@@ -35,7 +39,7 @@ class SessionsViewController(aDecoder: NSCoder) :
 
             var seq = AppContext.allData?.sessions.orEmpty().asSequence()
             if (mode == SessionsListMode.FAVORITES) {
-                val favorites = favoritesManager.getFavoriteSessionIds()
+                val favorites = repository.getFavoriteSessionIds()
                 seq = seq.filter { it.id in favorites }
             }
 
@@ -87,7 +91,9 @@ class SessionsViewController(aDecoder: NSCoder) :
 
     private fun registerUuid() {
         // We have to register uuid each time we enter our app, cause the user db may be reset on server
-        KonfService(errorHandler = { log(it.localizedDescription) }).registerUser(appDelegate.userUuid)
+        runSuspend {
+            KotlinConfApi.createUser(appDelegate.userUuid)
+        }
     }
 
     @ObjCAction
@@ -103,19 +109,14 @@ class SessionsViewController(aDecoder: NSCoder) :
             pullToRefresh.endRefreshing()
         }
 
-        val service = KonfService(errorHandler = createErrorHandler("Unable to load sessions.") {
-            hideProgress()
-        })
-
-        KonfLoader(service).updateSessions {
+        repository.updateSessions {
             hideProgress()
             updateResults()
         }
     }
 
     private fun refreshFavorites() {
-        val service = KonfService(errorHandler = { log(it.localizedDescription) })
-        KonfLoader(service).updateFavorites {
+        repository.updateFavorites {
             if (mode == SessionsListMode.FAVORITES) {
                 updateResults()
             }
@@ -123,8 +124,7 @@ class SessionsViewController(aDecoder: NSCoder) :
     }
 
     private fun refreshVotes() {
-        val service = KonfService(errorHandler = { log(it.localizedDescription) })
-        KonfLoader(service).updateVotes()
+        repository.updateVotes()
     }
 
     private fun updateResults() {

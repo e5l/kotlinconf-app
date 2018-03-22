@@ -7,17 +7,6 @@ import platform.darwin.*
 
 class NSErrorException(val error: NSError) : Exception()
 
-fun <T : Any> attempt(errorHandler: ((NSError) -> Unit)?, block: () -> T?): T? = try {
-    block()
-} catch (e: NSErrorException) {
-    if (errorHandler != null) {
-        errorHandler(e.error)
-    } else {
-        log("${e.error}")
-    }
-    null
-}
-
 interface DispatchQueue {
     companion object {
         val main: DispatchQueue = object : DispatchQueue {
@@ -37,53 +26,12 @@ interface DispatchQueue {
     fun asyncAfter(ms: Long, block: () -> Unit)
 }
 
-fun NSManagedObjectContext.perform(block: () -> Unit) {
-    performBlock(block)
-}
-
-fun NSManagedObjectContext.performAndWait(block: () -> Unit) {
-    performBlockAndWait(block)
-}
-
-fun log(text: String) {
-    println(text)
-}
-
-inline fun <R> nsTry(block: (errorPtr: CPointer<ObjCObjectVar<NSError?>>) -> R): R = memScoped {
-    val errorVar = alloc<ObjCObjectVar<NSError?>>()
-    errorVar.value = null
-    val result = block(errorVar.ptr)
-
-    val error = errorVar.value
-    if (error != null) {
-        throw NSErrorException(error)
-    }
-
-    result
-}
-
-fun nsArrayOf(): NSArray {
-    return NSArray.array()
-}
-
-fun nsArrayOf(obj: ObjCObject?): NSArray {
-    return NSArray.arrayWithObject(obj)
-}
-
 operator fun NSArray.get(index: Int): Any? {
     return this.objectAtIndex(index.toLong())
 }
 
 operator fun NSArray.get(index: Long): Any? {
     return this.objectAtIndex(index)
-}
-
-fun nsArrayOf(vararg objects: ObjCObject?): NSArray {
-    val arr = NSMutableArray.arrayWithCapacity(objects.size.toLong())
-    for (obj in objects) {
-        arr.addObject(obj)
-    }
-    return arr
 }
 
 fun <T> NSArray?.toList(): kotlin.collections.List<T> {

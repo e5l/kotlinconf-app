@@ -19,12 +19,12 @@ class KotlinConfApi(val userId: String) {
         delete("favorites", JSON.stringify(Favorite.serializer(), favorite)).withCheck()
     }
 
-    suspend fun postVote(vote: Vote): Unit {
-        post("votes", JSON.stringify(Vote.serializer(), vote)).withCheck()
+    suspend fun postVote(vote: Vote): Int {
+        return post("votes", JSON.stringify(Vote.serializer(), vote)).statusCode
     }
 
-    suspend fun deleteVote(vote: Vote): Unit {
-        delete("votes", JSON.stringify(Vote.serializer(), vote)).withCheck()
+    suspend fun deleteVote(vote: Vote): Int {
+        return delete("votes", JSON.stringify(Vote.serializer(), vote)).statusCode
     }
 
     private suspend fun get(path: String): HttpResponse = request(HttpMethod.Get, path, null)

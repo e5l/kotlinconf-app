@@ -13,6 +13,10 @@ actual class Date constructor(val origin: NSDate) {
     actual fun getMinutes(): Int = 0
     actual fun getTime(): Number = 0
 
+    override fun equals(other: Any?): Boolean {
+        return other is Date && other.compareTo(this) == 0
+    }
+
     actual companion object
 }
 
