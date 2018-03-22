@@ -3,7 +3,6 @@ package org.jetbrains.kotlinconf.data
 import libs.*
 import kotlinx.cinterop.*
 import kotlinx.serialization.json.*
-import org.jetbrains.kotlinconf.model.*
 import org.jetbrains.kotlinconf.util.*
 import platform.Foundation.*
 
