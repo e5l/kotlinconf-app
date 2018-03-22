@@ -48,11 +48,12 @@ class SessionsViewController(aDecoder: NSCoder) :
                     .sortedBy { it.roomId }
                     .sortedBy { it.id }
 
-            _fetchedResults = seq.toList().groupBy { it.startsAt!! }
+            _fetchedResults = fetched.toList().groupBy { it.startsAt!! }
+            println(_fetchedResults!!.map { "${it.key} - [${it.value.map { it.title }.joinToString()}]" })
             return _fetchedResults!!
         }
 
-    private fun sessionByIndex(i: Int) = sessions.toList().flatMap { it.second }.getOrNull(i)
+    private fun sessionByBucketAndIndex(bucket: Int, idx: Int) = sessions.toList().getOrNull(bucket)?.second?.getOrNull(idx)
 
     override fun initWithCoder(aDecoder: NSCoder) = initBy(SessionsViewController(aDecoder))
 
@@ -146,8 +147,9 @@ class SessionsViewController(aDecoder: NSCoder) :
             val selectedPath = tableView.indexPathForCell(selectedCell) ?: return
 
             val sessionViewController = segue.destinationViewController.uncheckedCast<SessionViewController>()
+            val section = selectedPath.section
             val row = selectedPath.row
-            sessionViewController.session = sessionByIndex(row.toInt()) ?: throw RuntimeException("Session index out of bounds")
+            sessionByBucketAndIndex(section.toInt(), row.toInt())?.let { sessionViewController.session = it }
         }
     }
 
@@ -166,8 +168,9 @@ class SessionsViewController(aDecoder: NSCoder) :
     override fun tableView(tableView: UITableView, cellForRowAtIndexPath: NSIndexPath): UITableViewCell {
         val cell = tableView.dequeueReusableCellWithIdentifier(
                 "Session", forIndexPath = cellForRowAtIndexPath).uncheckedCast<SessionsTableViewCell>()
+        val section = cellForRowAtIndexPath.section
         val row = cellForRowAtIndexPath.row
-        val session = sessionByIndex(row.toInt())
+        val session = sessionByBucketAndIndex(section.toInt(), row.toInt())
         if (session != null) {
             cell.setup(session)
         }

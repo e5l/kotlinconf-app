@@ -22,9 +22,6 @@ object SessionsComparator: Comparator<Session> {
     }
 }
 
-fun AllData.findSpeaker(id: String): Speaker? = speakers?.firstOrNull { it.id == id }
-fun AllData.findRoom(id: Int): Room? = rooms?.firstOrNull { it.id?.equals(id) == true }
-
 fun UIImageView.loadUserIcon(url: String?) {
     val nsURL = url?.let { NSURL.URLWithString(it) }
     sd_setImageWithURL(nsURL, placeholderImage = PLACEHOLDER_IMAGE)

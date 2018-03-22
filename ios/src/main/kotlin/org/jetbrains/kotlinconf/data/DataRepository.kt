@@ -71,7 +71,7 @@ class DataRepository(val uuid: String) {
     }
 
     fun getFavoriteSessionIds(): List<String> {
-        return AppContext.localFavorites.map { it.sessionId }.filterNotNull()
+        return AppContext.localFavorites.mapNotNull { it.sessionId }
     }
 
     fun getRating(session: Session): SessionRating? {

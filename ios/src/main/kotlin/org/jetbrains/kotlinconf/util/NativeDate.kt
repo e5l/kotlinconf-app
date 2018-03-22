@@ -2,25 +2,31 @@ package org.jetbrains.kotlinconf.util
 
 import platform.Foundation.*
 
-actual class Date constructor(val origin: NSDate) {
+actual class Date constructor(internal val origin: NSDate) {
 
     actual constructor() : this(NSDate.dateWithTimeIntervalSinceReferenceDate(0.0))
 
-    actual fun getDate(): Int = 0
-    actual fun getMonth(): Int = 0
-    actual fun getFullYear(): Int = 0
-    actual fun getHours(): Int = 0
-    actual fun getMinutes(): Int = 0
-    actual fun getTime(): Number = 0
+    actual fun getDate(): Int = origin.getCalendarComponent(NSCalendarUnitDay)
+    actual fun getMonth(): Int = origin.getCalendarComponent(NSCalendarUnitMonth)
+    actual fun getFullYear(): Int = origin.getCalendarComponent(NSCalendarUnitYear)
+    actual fun getHours(): Int = origin.getCalendarComponent(NSCalendarUnitHour)
+    actual fun getMinutes(): Int = origin.getCalendarComponent(NSCalendarUnitMinute)
+    actual fun getTime(): Number = origin.timeIntervalSince1970
 
     override fun equals(other: Any?): Boolean {
         return other is Date && other.compareTo(this) == 0
     }
 
+    override fun toString(): String {
+        return toReadableDateTimeString()
+    }
+
     actual companion object
 }
 
-actual fun parseDate(dateString: String): Date = Date()
+private fun NSDate.getCalendarComponent(unit: NSCalendarUnit): Int = NSCalendar.currentCalendar.component(unit, this).toInt()
+
+actual fun parseDate(dateString: String): Date = Date(IEEE_DATE_PARSER.dateFromString(dateString)!!)
 actual fun Date.toReadableDateString(): String = WEEKDAY_TIME_FORMATTER.stringFromDate(origin)
 actual fun Date.toReadableTimeString(): String = ONLY_TIME_FORMATTER.stringFromDate(origin)
 
