@@ -1,11 +1,9 @@
 package org.jetbrains.kotlinconf.data
 
-import kotlinx.cinterop.*
 import org.jetbrains.kotlinconf.model.*
 import org.jetbrains.kotlinconf.ui.*
 import org.jetbrains.kotlinconf.util.*
 import platform.Foundation.*
-import platform.CoreData.*
 
 class VotesManager {
     companion object {
@@ -14,18 +12,7 @@ class VotesManager {
     }
 
     fun getRating(session: Session): SessionRating? {
-        val moc = appDelegate.managedObjectContext
-
-        val request = NSFetchRequest(entityName = "KVote")
-        request.fetchLimit = 1
-        request.predicate = NSPredicate.predicateWithFormat(
-                "sessionId == %@",
-                argumentArray = nsArrayOf(session.id.uncheckedCast())
-        )
-
-        return attempt(null) {
-            moc.executeFetchRequest(request).firstObject?.uncheckedCast<Vote>()
-        }?.rating?.let { SessionRating.valueOf(it) }
+        return AppContext.localVotes.firstOrNull { it.sessionId == session.id }?.rating?.let { SessionRating.valueOf(it) }
     }
 
     fun setRating(
@@ -64,21 +51,9 @@ class VotesManager {
     }
 
     private fun setLocalRating(session: Session, rating: SessionRating?) {
-        val moc = appDelegate.managedObjectContext
-
-        // Delete old rating if exists
-//        val request = NSFetchRequest(entityName = "KVote")
-//        request.predicate = NSPredicate.predicateWithFormat("sessionId == %@", argumentArray = nsArrayOf(session.id!!.toNSString()))
-//        val votes: NSArray = moc.executeFetchRequest(request)
-//        votes.toList<Vote>().forEach { moc.deleteObject(it) }
-
-//        if (rating != null) {
-//            Vote(moc.entityDescription("KVote"), insertIntoManagedObjectContext = moc).apply {
-//                sessionId = session.id
-//                setRating(rating.rawValue)
-//            }
-//        }
-
-        moc.save()
+        AppContext.localVotes.removeAll { it.sessionId == session.id }
+        if (rating != null) {
+            AppContext.localVotes.add(Vote(session.id, rating.value))
+        }
     }
 }

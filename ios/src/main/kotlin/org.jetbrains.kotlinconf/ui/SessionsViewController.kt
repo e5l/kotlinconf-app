@@ -1,6 +1,5 @@
 package org.jetbrains.kotlinconf.ui
 
-import libs.*
 import kotlinx.cinterop.*
 import org.jetbrains.kotlinconf.*
 import org.jetbrains.kotlinconf.data.*
@@ -10,7 +9,7 @@ import platform.Foundation.*
 import platform.CoreData.*
 
 @ExportObjCClass
-@Suppress("CONFLICTING_OVERLOADS")
+@Suppress("CONFLICTING_OVERLOADS", "RETURN_TYPE_MISMATCH_ON_OVERRIDE", "RETURN_TYPE_MISMATCH_ON_INHERITANCE")
 class SessionsViewController(aDecoder: NSCoder) :
         UIViewController(aDecoder),
         NSFetchedResultsControllerDelegateProtocol,
@@ -24,40 +23,33 @@ class SessionsViewController(aDecoder: NSCoder) :
 
     private var mode: SessionsListMode = SessionsListMode.ALL
 
-    private var _fetchedResultsController: NSFetchedResultsController? = null
+    private var _fetchedResults: Map<Date, List<Session>>? = null
 
     lateinit var pullToRefresh: UIRefreshControl
 
     @ObjCOutlet
     lateinit var tableView: UITableView
 
-    private val fetchedResultsController: NSFetchedResultsController
+    private val sessions: Map<Date, List<Session>>
         get() {
-            _fetchedResultsController?.let { return it }
+            _fetchedResults?.let { return it }
 
-            val request = NSFetchRequest(entityName = "KSession")
-            request.sortDescriptors = nsArrayOf(
-                    NSSortDescriptor.sortDescriptorWithKey("endsAt", ascending = true),
-                    NSSortDescriptor.sortDescriptorWithKey("roomName", ascending = true),
-                    NSSortDescriptor.sortDescriptorWithKey("id", ascending = true)
-            )
-
+            var seq = AppContext.allData?.sessions.orEmpty().asSequence()
             if (mode == SessionsListMode.FAVORITES) {
-                val favorites = favoritesManager.getFavoriteItemIds()
-                request.predicate = NSPredicate.predicateWithFormat(
-                        "id IN %@", argumentArray = nsArrayOf(favorites)
-                )
+                val favorites = favoritesManager.getFavoriteSessionIds()
+                seq = seq.filter { it.id in favorites }
             }
 
-            val moc = appDelegate.managedObjectContext
-            val fetchedResultsController = NSFetchedResultsController(
-                    request, managedObjectContext = moc, sectionNameKeyPath = "startsAtDate", cacheName = null
-            )
-            fetchedResultsController.delegate = this
+            val fetched = seq
+                    .sortedWith(SessionsComparator)
+                    .sortedBy { it.roomId }
+                    .sortedBy { it.id }
 
-            _fetchedResultsController = fetchedResultsController
-            return fetchedResultsController
+            _fetchedResults = seq.toList().groupBy { it.startsAt!! }
+            return _fetchedResults!!
         }
+
+    private fun sessionByIndex(i: Int) = sessions.toList().flatMap { it.second }.getOrNull(i)
 
     override fun initWithCoder(aDecoder: NSCoder) = initBy(SessionsViewController(aDecoder))
 
@@ -78,8 +70,7 @@ class SessionsViewController(aDecoder: NSCoder) :
                 forControlEvents = UIControlEventValueChanged)
         tableView.backgroundView = pullToRefresh
 
-        val moc = appDelegate.managedObjectContext
-        val loadSessions = moc.countForFetchRequest(NSFetchRequest(entityName = "KSession"), error = null) <= 0
+        val loadSessions = AppContext.sessionsModels.orEmpty().isEmpty()
 
         if (loadSessions) {
             refreshSessions(this, showProgressPopup = true)
@@ -138,12 +129,12 @@ class SessionsViewController(aDecoder: NSCoder) :
     }
 
     private fun updateResults() {
-        _fetchedResultsController = null
+        _fetchedResults = null
 
         try {
-            nsTry { errorPtr -> fetchedResultsController.performFetch(error = errorPtr) }
             tableView.reloadData()
         } catch (e: NSErrorException) {
+            println(e.toString())
             showPopupText("Unable to load sessions.")
         }
     }
@@ -156,12 +147,13 @@ class SessionsViewController(aDecoder: NSCoder) :
             val selectedPath = tableView.indexPathForCell(selectedCell) ?: return
 
             val sessionViewController = segue.destinationViewController.uncheckedCast<SessionViewController>()
-            sessionViewController.session = fetchedResultsController.objectAtIndexPath(selectedPath)!!.uncheckedCast()
+            val row = selectedPath.row
+            sessionViewController.session = sessionByIndex(row.toInt()) ?: throw RuntimeException("Session index out of bounds")
         }
     }
 
     override fun numberOfSectionsInTableView(tableView: UITableView): Long {
-        return fetchedResultsController.sections?.count ?: 0
+        return sessions.size.toLong()
     }
 
     override fun tableView(tableView: UITableView, didSelectRowAtIndexPath: NSIndexPath) {
@@ -169,14 +161,14 @@ class SessionsViewController(aDecoder: NSCoder) :
     }
 
     override fun tableView(tableView: UITableView, numberOfRowsInSection: Long): Long {
-        val sections = fetchedResultsController.sections ?: return 0
-        return sections[numberOfRowsInSection].uncheckedCast<NSFetchedResultsSectionInfoProtocol>().numberOfObjects
+        return sessions.toList()[numberOfRowsInSection.toInt()].second.size.toLong()
     }
 
     override fun tableView(tableView: UITableView, cellForRowAtIndexPath: NSIndexPath): UITableViewCell {
         val cell = tableView.dequeueReusableCellWithIdentifier(
                 "Session", forIndexPath = cellForRowAtIndexPath).uncheckedCast<SessionsTableViewCell>()
-        val session = fetchedResultsController.objectAtIndexPath(cellForRowAtIndexPath)?.uncheckedCast<Session>()
+        val row = cellForRowAtIndexPath.row
+        val session = sessionByIndex(row.toInt())
         if (session != null) {
             cell.setup(session)
         }
@@ -184,10 +176,8 @@ class SessionsViewController(aDecoder: NSCoder) :
     }
 
     override fun tableView(tableView: UITableView, titleForHeaderInSection: Long): String? {
-        val sections = fetchedResultsController.sections ?: return null
-        val sectionInfo = sections[titleForHeaderInSection]?.uncheckedCast<NSFetchedResultsSectionInfoProtocol>()
-        val session = sectionInfo?.objects?.firstObject?.uncheckedCast<Session>()
-        return renderWeekdayTime(session?.startsAt!!)
+        val date = sessions.toList()[titleForHeaderInSection.toInt()].first
+        return renderWeekdayTime(date)
     }
 }
 

@@ -1,7 +1,6 @@
 package org.jetbrains.kotlinconf.data
 
-import kotlinx.cinterop.*
-import libs.*
+import org.jetbrains.kotlinconf.*
 import org.jetbrains.kotlinconf.ui.*
 import org.jetbrains.kotlinconf.util.*
 import platform.CoreData.*
@@ -13,63 +12,28 @@ class KonfLoader(private val service: KonfService) {
     }
 
     fun updateFavorites(onComplete: () -> Unit = {}) {
-        service.getFavorites(appDelegate.userUuid, updateSimpleList("KFavorite", onComplete))
+        service.getFavorites(appDelegate.userUuid, updateSimpleList("Favorite", onComplete))
     }
 
     fun updateVotes(onComplete: () -> Unit = {}) {
-        service.getVotes(appDelegate.userUuid, updateSimpleList("KVote", onComplete))
+        service.getVotes(appDelegate.userUuid, updateSimpleList("Vote", onComplete))
     }
 
     private fun updateSimpleList(entityName: String, onComplete: () -> Unit): (NSArray) -> Unit {
-        return { arr ->
-            val moc = appDelegate.managedObjectContext
-
-            performSafe(moc) {
-                moc.deleteAll(entityName)
-                nsTry { errorPtr ->
-                    GRTJSONSerialization.objectsWithEntityName(
-                        entityName, fromJSONArray = arr, inContext = moc, error = errorPtr)
-                }
-                moc.saveRecursively()
-                DispatchQueue.main.async { onComplete() }
-            }
-        }
+       // todo
+        return {}
     }
 
-    private fun parseSessions(dict: NSDictionary, onComplete: () -> Unit) {
-        val moc = appDelegate.managedObjectContext
+    private fun parseSessions(all: AllData, onComplete: () -> Unit) {
 
-        performSafe(moc) {
-//            moc.deleteAll("AllData")
-            
-            val all = nsTry { errorPtr ->
-                GRTJSONSerialization.objectWithEntityName("AllData",
-                    fromJSONDictionary = dict, inContext = moc, error = errorPtr)
-            }!!.uncheckedCast<AllData>()
+        val sessionModels = all.sessions?.map { SessionModel.forSession(all, it.id!!)!! }
 
-            for (session in all.sessions ?: emptyList()) {
-                val speakerIdsList: List<String?> = session.speakers!!
-                
-                var subtitle = speakerIdsList.asSequence()
-                    .filterNotNull()
-                    .mapNotNull { all.findSpeaker(it) }
-                    .take(2)
-                    .mapNotNull { it.fullName }
-                    .joinToString()
-
-                val roomName = all.findRoom(session.roomId!!)?.name?.let { roomName ->
-                    subtitle += " — $roomName"
-//                    session.roomName = roomName
-                }
-
-//                session.startsAtDate = parseDate(session.startsAt)
-//                session.endsAtDate = parseDate(session.endsAt)
-                
-//                session.subtitle = subtitle
-            }
-
-            moc.saveRecursively()
-            DispatchQueue.main.async { onComplete() }
+        DispatchQueue.main.async {
+            AppContext.allData = all
+            AppContext.sessionsModels = sessionModels
+            AppContext.localFavorites = all.favorites.orEmpty().toMutableList()
+            AppContext.localVotes = all.votes.orEmpty().toMutableList()
+            onComplete()
         }
     }
 

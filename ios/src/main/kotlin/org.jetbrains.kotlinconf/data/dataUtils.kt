@@ -17,6 +17,12 @@ operator fun Session.compareTo(other: Session): Int {
     return thisDate.compareTo(otherDate)
 }
 
+object SessionsComparator: Comparator<Session> {
+    override fun compare(a: Session, b: Session): Int {
+        return a.compareTo(b)
+    }
+}
+
 fun AllData.findSpeaker(id: String): Speaker? = speakers?.firstOrNull { it.id == id }
 fun AllData.findRoom(id: Int): Room? = rooms?.firstOrNull { it.id?.equals(id) == true }
 
