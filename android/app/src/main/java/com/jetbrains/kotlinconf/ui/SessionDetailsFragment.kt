@@ -30,7 +30,7 @@ import org.jetbrains.anko.design.floatingActionButton
 import org.jetbrains.anko.design.themedAppBarLayout
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.nestedScrollView
-import org.jetbrains.kotlinconf.utils.*
+import org.jetbrains.kotlinconf.util.*
 
 class SessionDetailsFragment : Fragment() {
 

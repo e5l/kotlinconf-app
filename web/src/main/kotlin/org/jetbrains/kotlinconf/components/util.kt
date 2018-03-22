@@ -1,16 +1,8 @@
 package org.jetbrains.kotlinconf.components
 
-import org.jetbrains.kotlinconf.utils.Date
-import org.jetbrains.kotlinconf.utils.parseDate
-import org.jetbrains.kotlinconf.utils.toReadableDateTimeString
-import org.jetbrains.kotlinconf.utils.toReadableString
-import kotlinext.js.clone
-import kotlinext.js.jsObject
-import react.RBuilder
-import react.RState
-import react.React
-import react.dom.div
-import react.dom.span
+import org.jetbrains.kotlinconf.util.*
+import react.*
+import react.dom.*
 
 inline fun <T : RState> React.Component<*, T>.setState(action: T.() -> Unit) {
     setState(jsObject(action))
@@ -25,8 +17,7 @@ inline fun <T> RBuilder.loading(value: T?, action: (T) -> Unit) {
         div(classes = "loading") {
             +"Loading data..."
         }
-    }
-    else {
+    } else {
         action(value)
     }
 }
@@ -40,12 +31,10 @@ fun RBuilder.dateRange(range: Pair<Date?, Date?>) {
         if (startsAt != null) {
             +if (endsAt != null) {
                 (startsAt to endsAt).toReadableString()
-            }
-            else {
+            } else {
                 startsAt.toReadableDateTimeString()
             }
-        }
-        else {
+        } else {
             span(classes = "session-time-unknown") { +"Time unknown" }
         }
     }
@@ -54,3 +43,24 @@ fun RBuilder.dateRange(range: Pair<Date?, Date?>) {
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun Double.toFixed(precision: Int): String = asDynamic().toFixed(precision)
+
+inline fun <T : Any> jsObject(builder: T.() -> Unit): T {
+    val obj: T = js("({})")
+    return obj.apply {
+        builder()
+    }
+}
+
+inline fun js(builder: dynamic.() -> Unit): dynamic = jsObject(builder)
+
+fun <T : Any> clone(obj: T) = assign(jsObject<T> {}, obj)
+inline fun <T : Any> assign(obj: T, builder: T.() -> Unit) = clone(obj).apply(builder)
+
+external fun <T, R : T> assign(dest: R, src: T): R
+
+fun toPlainObjectStripNull(obj: Any) = js {
+    for (key in Object.keys(obj)) {
+        val value = obj.asDynamic()[key]
+        if (value != null) this[key] = value
+    }
+}

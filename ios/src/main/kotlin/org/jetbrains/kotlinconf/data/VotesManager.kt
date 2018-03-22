@@ -1,7 +1,6 @@
 package org.jetbrains.kotlinconf.data
 
 import kotlinx.cinterop.*
-import org.jetbrains.kotlinconf.model.*
 import org.jetbrains.kotlinconf.ui.*
 import org.jetbrains.kotlinconf.util.*
 import platform.Foundation.*

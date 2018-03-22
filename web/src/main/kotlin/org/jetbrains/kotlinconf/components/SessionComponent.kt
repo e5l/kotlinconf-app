@@ -1,19 +1,12 @@
 package org.jetbrains.kotlinconf.components
 
-import org.jetbrains.kotlinconf.SessionModel
-import kotlinext.js.jsObject
-import org.jetbrains.kotlinconf.api.Votes
-import org.jetbrains.kotlinconf.api.VotesSubscription
-import org.jetbrains.kotlinconf.api.async
-import org.jetbrains.kotlinconf.sessionsAPI
+import org.jetbrains.kotlinconf.*
+import org.jetbrains.kotlinconf.api.*
 import react.*
-import react.dom.div
-import react.dom.p
-import react.dom.span
-import kotlin.browser.window
-import kotlin.js.Json
-import kotlin.js.Math
-import kotlin.js.json
+import react.dom.*
+import kotlin.browser.*
+import kotlin.js.*
+import kotlin.math.*
 
 class SessionComponent : RComponent<RouteResultProps<SessionProps>, SessionState>() {
     private var votesSubscription: VotesSubscription? = null
@@ -112,7 +105,7 @@ class SessionComponent : RComponent<RouteResultProps<SessionProps>, SessionState
                         span(classes = "session-votes-cell-hack") { +"\u00A0" }
                         div("session-votes-container") {
                             span(classes = "session-votes-label") { +"\u00A0" }
-                            span(classes = "session-votes-count-percentage") { +"${Math.round(percent * 100)}%" }
+                            span(classes = "session-votes-count-percentage") { +"${round(percent * 100)}%" }
                             span(classes = "session-votes-count-absolute") { +"$value votes" }
                         }
                     }

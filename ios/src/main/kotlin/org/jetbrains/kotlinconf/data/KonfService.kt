@@ -2,7 +2,6 @@ package org.jetbrains.kotlinconf.data
 
 import libs.*
 import kotlinx.cinterop.*
-import org.jetbrains.kotlinconf.model.*
 import org.jetbrains.kotlinconf.util.*
 import platform.Foundation.*
 
@@ -29,7 +28,7 @@ class KonfService(override val errorHandler: (NSError) -> Unit) : NetworkService
     }
 
     override val baseUrl = "https://api.kotlinconf.com"
-    
+
     fun registerUser(uuid: String, onComplete: () -> Unit = {}) {
         val request = OMGHTTPURLRQ.POST(url("/users"), rawText = uuid)
         plainRequest(request, OK_STATUS_CODES + listOf(kHTTPStatusCodeConflict), { onComplete() })

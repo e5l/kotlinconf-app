@@ -1,7 +1,7 @@
 package org.jetbrains.kotlinconf
 
 import org.jetbrains.kotlinconf.data.*
-import org.jetbrains.kotlinconf.utils.*
+import org.jetbrains.kotlinconf.util.*
 import io.ktor.common.client.*
 
 class SessionModel(
@@ -23,6 +23,7 @@ class SessionModel(
             val categoryMap = all.categories?.flatMap {
                 it.items?.filterNotNull() ?: emptyList()
             }?.associateBy { it.id } ?: emptyMap()
+
             return forSession(briefSession,
                     speakerProvider = { id -> speakerMap[id] },
                     categoryProvider = { id -> categoryMap[id] },
@@ -38,6 +39,7 @@ class SessionModel(
         ): SessionModel? {
             val startsAt = briefSession.startsAt ?: return null
             val endsAt = briefSession.endsAt ?: return null
+
             return SessionModel(
                     id = briefSession.id!!,
                     title = briefSession.title ?: "<untitled>",

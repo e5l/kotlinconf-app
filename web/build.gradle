@@ -18,10 +18,6 @@ apply plugin: "kotlin2js"
 apply plugin: "kotlin-dce-js"
 apply plugin: "com.moowork.node"
 
-node {
-    download = true
-}
-
 repositories {
     maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
     maven { url "http://dl.bintray.com/kotlinx/kotlinx" }
@@ -31,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    compile project(":common-js")
+    compile project(':common-js')
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
     compile("org.jetbrains.kotlinx:kotlinx-html-js:$kotlinx_html_version") { force = true }
     compile "org.jetbrains:kotlin-react:$react_version"

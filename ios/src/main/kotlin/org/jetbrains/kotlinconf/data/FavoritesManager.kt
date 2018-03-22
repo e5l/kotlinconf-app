@@ -15,7 +15,7 @@ class FavoritesManager {
         val request = NSFetchRequest(entityName = "Favorite")
         request.fetchLimit = 1
         request.predicate = NSPredicate.predicateWithFormat(
-                "sessionId == %@", 
+                "sessionId == %@",
                 argumentArray = nsArrayOf(session.id!!.toNSString())
         )
 

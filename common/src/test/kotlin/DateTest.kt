@@ -1,6 +1,6 @@
 package org.jetbrains.kotlinconf
 
-import org.jetbrains.kotlinconf.utils.*
+import org.jetbrains.kotlinconf.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

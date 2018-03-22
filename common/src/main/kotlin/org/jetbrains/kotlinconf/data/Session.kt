@@ -1,7 +1,7 @@
 package org.jetbrains.kotlinconf.data
 
 import kotlinx.serialization.*
-import org.jetbrains.kotlinconf.utils.*
+import org.jetbrains.kotlinconf.util.*
 
 @Serializable
 data class Session(

@@ -1,8 +1,6 @@
 package org.jetbrains.kotlinconf.ui
 
-import libs.*
 import kotlinx.cinterop.*
-import org.jetbrains.kotlinconf.*
 import org.jetbrains.kotlinconf.data.*
 import org.jetbrains.kotlinconf.util.*
 import platform.UIKit.*

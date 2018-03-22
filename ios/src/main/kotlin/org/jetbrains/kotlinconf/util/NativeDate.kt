@@ -1,4 +1,4 @@
-package org.jetbrains.kotlinconf
+package org.jetbrains.kotlinconf.util
 
 import platform.Foundation.*
 

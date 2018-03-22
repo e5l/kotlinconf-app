@@ -4,7 +4,6 @@ import org.jetbrains.kotlinconf.data.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
-import io.ktor.gson.*
 import io.ktor.http.*
 import io.ktor.pipeline.*
 import io.ktor.request.*
@@ -12,8 +11,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.experimental.channels.*
-import org.jetbrains.kotlinconf.*
-import org.jetbrains.kotlinconf.utils.*
+import org.jetbrains.kotlinconf.util.*
 import java.time.*
 import java.time.format.*
 import java.util.*
@@ -244,3 +242,8 @@ fun Routing.wsVotes(database: Database, production: Boolean) {
         }
     }
 }
+
+private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+
+internal fun org.jetbrains.kotlinconf.util.Date.toLocalDateTime(format: DateTimeFormatter = dateFormat): LocalDateTime =
+        LocalDateTime.parse(apiDateFormat.format(this), format)

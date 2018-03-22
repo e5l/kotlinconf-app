@@ -1,7 +1,6 @@
 package org.jetbrains.kotlinconf.data
 
 import libs.*
-import org.jetbrains.kotlinconf.*
 import org.jetbrains.kotlinconf.util.*
 import platform.Foundation.*
 import platform.UIKit.*
