@@ -3,45 +3,28 @@ package org.jetbrains.kotlinconf.api
 import org.jetbrains.kotlinconf.data.*
 import io.ktor.common.client.*
 import io.ktor.common.client.http.*
+import kotlinx.serialization.json.*
 
 private val END_POINT = "api.kotlinconf.com"
 
 class KotlinConfApi(val userId: String) {
 
-    /*
-    @POST("users")
-    fun postUserId(@Body uuid: RequestBody): Call<ResponseBody>
+    suspend fun getAll(): AllData = JSON.parse(AllData.serializer(), get("all").withCheck().body)
 
-    @POST("favorites")
-    fun postFavorite(@Body favorite: Favorite): Call<ResponseBody>
-
-    @HTTP(method = "DELETE", path = "favorites", hasBody = true)
-    fun deleteFavorite(@Body favorite: Favorite): Call<ResponseBody>
-
-    @POST("votes")
-    fun postVote(@Body vote: Vote): Call<ResponseBody>
-
-    @HTTP(method = "DELETE", path = "votes", hasBody = true)
-    fun deleteVote(@Body vote: Vote): Call<ResponseBody>
-     */
-
-
-    suspend fun getAll(): AllData {
-        val get = get("all")
-        println(get.body)
-        throw ApiException(get)
+    suspend fun postFavorite(favorite: Favorite) {
+        post("favorites", JSON.stringify(Favorite.serializer(), favorite)).withCheck()
     }
 
-    suspend fun postFavorite(favorite: Favorite): Unit {
-    }
     suspend fun deleteFavorite(favorite: Favorite): Unit {
-
+        delete("favorites", JSON.stringify(Favorite.serializer(), favorite)).withCheck()
     }
 
     suspend fun postVote(vote: Vote): Unit {
+        post("votes", JSON.stringify(Vote.serializer(), vote)).withCheck()
     }
 
     suspend fun deleteVote(vote: Vote): Unit {
+        delete("votes", JSON.stringify(Vote.serializer(), vote)).withCheck()
     }
 
     private suspend fun get(path: String): HttpResponse = request(HttpMethod.Get, path, null)
@@ -79,5 +62,11 @@ class KotlinConfApi(val userId: String) {
         }
     }
 }
+
+private fun HttpResponse.withCheck(): HttpResponse {
+    if (!isSuccess()) throw ApiException(this)
+    return this
+}
+private fun HttpResponse.isSuccess() = statusCode / 100 == 2
 
 class ApiException(val response: HttpResponse) : Throwable()
