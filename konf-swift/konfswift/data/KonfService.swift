@@ -4,7 +4,7 @@ import OMGHTTPURLRQ
 import ILGHttpConstants
 
 class KonfService : NetworkService {
-    static let BASE_URL = "https://it-konf.service.spb.consul"
+    static let BASE_URL = "https://api.kotlinconf.com"
     let errorHandler: (Error) -> ()
 
     init(errorHandler: @escaping (Error) -> ()) {
