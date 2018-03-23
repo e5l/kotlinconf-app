@@ -33,7 +33,7 @@ class DataRepository(val uuid: String) {
 
     fun updateVotes(onComplete: () -> Unit = {}) {
         // todo: api.getVotes
-        updateVotes(onComplete)
+        updateSessions(onComplete)
     }
 
     fun isFavorite(session: Session) = getFavorite(session) != null
