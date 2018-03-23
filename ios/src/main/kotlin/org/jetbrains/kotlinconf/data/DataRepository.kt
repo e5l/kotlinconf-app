@@ -1,9 +1,9 @@
 package org.jetbrains.kotlinconf.data
 
 import io.ktor.common.client.*
-import libs.*
 import org.jetbrains.kotlinconf.*
 import org.jetbrains.kotlinconf.api.*
+import org.jetbrains.kotlinconf.util.*
 
 class DataRepository(val uuid: String) {
     val api by lazy {
@@ -13,17 +13,17 @@ class DataRepository(val uuid: String) {
     fun updateSessions(onComplete: () -> Unit) {
         runSuspend {
             val all = api.getAll()
-            parseSessions(all, onComplete)
+            parseSessions(all)
+            onComplete()
         }
     }
 
-    private fun parseSessions(all: AllData, onComplete: () -> Unit) {
+    private fun parseSessions(all: AllData) {
         val sessionModels = all.sessions?.map { SessionModel.forSession(all, it.id!!)!! }
         AppContext.allData = all
         AppContext.sessionsModels = sessionModels
         AppContext.localFavorites = all.favorites.orEmpty().toMutableList()
         AppContext.localVotes = all.votes.orEmpty().toMutableList()
-        onComplete()
     }
 
     fun updateFavorites(onComplete: () -> Unit = {}) {
@@ -101,6 +101,7 @@ class DataRepository(val uuid: String) {
                 when (code) {
                     VoteActionResult.TOO_EARLY -> onError(EARLY_SUBMITTION_ERROR)
                     VoteActionResult.TOO_LATE -> onError(LATE_SUBMITTION_ERROR)
+                    else -> onError(cause)
                 }
             } catch (cause: Throwable) {
                 onError(cause)
@@ -120,13 +121,38 @@ class DataRepository(val uuid: String) {
         onComplete(false)
     }
 
+    private var _cachedSessions: Map<Date, List<Session>>? = null
+        set(value) {
+            field = value
+            _cachedSessionsList = value!!.toList()
+        }
+
+    private var _cachedSessionsList: List<Pair<Date, List<Session>>>? = null
+
+    fun fetchSessions(mode: SessionsListMode = SessionsListMode.ALL) {
+
+        var seq = AppContext.allData?.sessions.orEmpty().asSequence()
+        if (mode == SessionsListMode.FAVORITES) {
+            val favorites = getFavoriteSessionIds()
+            seq = seq.filter { it.id in favorites }
+        }
+
+        seq = seq
+                .sortedWith(SessionsComparator)
+                .sortedBy { it.roomId }
+                .sortedBy { it.id }
+
+        _cachedSessions = seq.toList().groupBy { it.startsAt!! }
+    }
+
+    val sessions: Map<Date, List<Session>>
+        get() = _cachedSessions.orEmpty()
+
+    fun getSession(bucket: Int, idx: Int) = _cachedSessionsList?.getOrNull(bucket)?.second?.getOrNull(idx)
+
     companion object {
         private val kHTTPStatusCodeComeBackLater = 477
         private val kHTTPStatusCodeTooLate = 478
-
-        private val OK_STATUS_CODES = listOf(kHTTPStatusCodeCreated, kHTTPStatusCodeOK)
-        private val OK_WITH_TIME_STATUS_CODES = OK_STATUS_CODES +
-                listOf(kHTTPStatusCodeComeBackLater, kHTTPStatusCodeTooLate)
 
         val EARLY_SUBMITTION_ERROR = RuntimeException("VotesManager")
         val LATE_SUBMITTION_ERROR = RuntimeException("VotesManager")
@@ -143,4 +169,9 @@ class DataRepository(val uuid: String) {
             }
         }
     }
+
+    enum class SessionsListMode {
+        ALL, FAVORITES
+    }
+
 }

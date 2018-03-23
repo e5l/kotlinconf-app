@@ -4,6 +4,7 @@ import io.ktor.common.client.*
 import kotlinx.cinterop.*
 import org.jetbrains.kotlinconf.api.*
 import org.jetbrains.kotlinconf.data.*
+import org.jetbrains.kotlinconf.data.DataRepository.SessionsListMode
 import org.jetbrains.kotlinconf.util.*
 import platform.CoreData.*
 import platform.Foundation.*
@@ -26,34 +27,15 @@ class SessionsViewController(aDecoder: NSCoder) :
 
     private var mode: SessionsListMode = SessionsListMode.ALL
 
-    private var _fetchedResults: Map<Date, List<Session>>? = null
-
     lateinit var pullToRefresh: UIRefreshControl
 
     @ObjCOutlet
     lateinit var tableView: UITableView
 
     private val sessions: Map<Date, List<Session>>
-        get() {
-            _fetchedResults?.let { return it }
+        get() = repository.sessions
 
-            var seq = AppContext.allData?.sessions.orEmpty().asSequence()
-            if (mode == SessionsListMode.FAVORITES) {
-                val favorites = repository.getFavoriteSessionIds()
-                seq = seq.filter { it.id in favorites }
-            }
-
-            val fetched = seq
-                    .sortedWith(SessionsComparator)
-                    .sortedBy { it.roomId }
-                    .sortedBy { it.id }
-
-            _fetchedResults = fetched.toList().groupBy { it.startsAt!! }
-            println(_fetchedResults!!.map { "${it.key} - [${it.value.map { it.title }.joinToString()}]" })
-            return _fetchedResults!!
-        }
-
-    private fun sessionByBucketAndIndex(bucket: Int, idx: Int) = sessions.toList().getOrNull(bucket)?.second?.getOrNull(idx)
+    private fun sessionByBucketAndIndex(bucket: Int, idx: Int) = repository.getSession(bucket, idx)
 
     override fun initWithCoder(aDecoder: NSCoder) = initBy(SessionsViewController(aDecoder))
 
@@ -92,7 +74,8 @@ class SessionsViewController(aDecoder: NSCoder) :
         // We have to register uuid each time we enter our app, cause the user db may be reset on server
         runSuspend {
             try {
-                KotlinConfApi.createUser(appDelegate.userUuid)
+                val succ = KotlinConfApi.createUser(appDelegate.userUuid)
+                println("REGISTER UUID: $succ")
             } catch (e: Throwable) {
                 println(e)
             }
@@ -115,7 +98,7 @@ class SessionsViewController(aDecoder: NSCoder) :
         repository.updateSessions {
             hideProgress()
             updateResults()
-            registerUuid()
+//            registerUuid()
         }
     }
 
@@ -123,7 +106,7 @@ class SessionsViewController(aDecoder: NSCoder) :
         repository.updateFavorites {
             if (mode == SessionsListMode.FAVORITES) {
                 updateResults()
-                registerUuid()
+//                registerUuid()
             }
         }
     }
@@ -133,9 +116,8 @@ class SessionsViewController(aDecoder: NSCoder) :
     }
 
     private fun updateResults() {
-        _fetchedResults = null
-
         try {
+            repository.fetchSessions(mode)
             tableView.reloadData()
         } catch (e: NSErrorException) {
             println(e.toString())
@@ -187,9 +169,6 @@ class SessionsViewController(aDecoder: NSCoder) :
     }
 }
 
-private enum class SessionsListMode {
-    ALL, FAVORITES
-}
 
 @ExportObjCClass
 class SessionsTableViewCell(aDecoder: NSCoder) : UITableViewCell(aDecoder) {
