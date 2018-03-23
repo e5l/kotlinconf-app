@@ -6,10 +6,7 @@ target 'konfswift' do
   # Pods for konfswift
   pod 'SDWebImage', '~> 4.1.0'
   pod 'MBProgressHUD', '~> 1.0.0'
-  pod 'OMGHTTPURLRQ', '~> 3.2.2'
-  pod 'Groot', '~> 3.0-beta.1'
   pod 'TagListView-ObjC', '~> 0.1.1'
-  pod 'ILGHttpConstants', '~> 2.0.0'
 
   target 'konfswiftTests' do
     inherit! :search_paths

@@ -1,5 +1,4 @@
 import UIKit
-import CoreData
 import konfSwiftFramework
 
 class SessionsViewController: UITableViewController {

@@ -1,5 +1,4 @@
 import UIKit
-import Groot
 import konfSwiftFramework
 
 @UIApplicationMain
