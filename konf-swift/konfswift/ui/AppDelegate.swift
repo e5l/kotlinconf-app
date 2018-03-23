@@ -3,7 +3,7 @@ import Groot
 import konfSwiftFramework
 
 @UIApplicationMain
-class AppDelegate: CoreDataResponderBase {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     private static let GENERATE_ID_ONCE_KEY = "generateIdOnce"
     static let UUID_KEY = "vendorId"
 
@@ -13,16 +13,8 @@ class AppDelegate: CoreDataResponderBase {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?
     ) -> Bool {
-        initValueTransformers()
         generateUuidIfNeeded()
         return true
-    }
-
-    private func initValueTransformers() {
-        ValueTransformer.grt_setValueTransformer(withName: "StringToDate") { rawValue in
-            guard let str = rawValue as? String else { return rawValue }
-            return parseDate(from: str)
-        }
     }
 
     private func generateUuidIfNeeded() {
@@ -40,6 +32,14 @@ class AppDelegate: CoreDataResponderBase {
 
     static var me: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
+    }
+
+    public func applicationWillTerminate(_ application: UIApplication) {
+        self.saveContext()
+    }
+
+    func saveContext() {
+        // todo: save context
     }
 }
 

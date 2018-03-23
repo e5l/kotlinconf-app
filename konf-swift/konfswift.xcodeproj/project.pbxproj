@@ -8,24 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		2C024B1A1F7494B400A7EAEC /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C024B191F7494B400A7EAEC /* AboutViewController.swift */; };
-		2C2AA3091F72F31F004DA532 /* KonfService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2AA3081F72F31F004DA532 /* KonfService.swift */; };
-		2C31CF191F7ABCE30038816F /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C31CF181F7ABCE30038816F /* NetworkService.swift */; };
-		2C31CF1B1F7ABF830038816F /* KonfLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C31CF1A1F7ABF830038816F /* KonfLoader.swift */; };
-		2C3E113A1F75AB270023B4BA /* FavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3E11391F75AB270023B4BA /* FavoritesManager.swift */; };
 		2C50FD941F729FE000B3F845 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50FD931F729FE000B3F845 /* AppDelegate.swift */; };
 		2C50FD991F729FE000B3F845 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2C50FD971F729FE000B3F845 /* Main.storyboard */; };
-		2C50FD9C1F729FE000B3F845 /* konfswift.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2C50FD9A1F729FE000B3F845 /* konfswift.xcdatamodeld */; };
 		2C50FD9E1F729FE000B3F845 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C50FD9D1F729FE000B3F845 /* Assets.xcassets */; };
 		2C50FDA11F729FE000B3F845 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2C50FD9F1F729FE000B3F845 /* LaunchScreen.storyboard */; };
 		2C50FDAC1F729FE000B3F845 /* konfswiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50FDAB1F729FE000B3F845 /* konfswiftTests.swift */; };
-		2C63933E1F741248004953A3 /* dateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C63933D1F741248004953A3 /* dateUtils.swift */; };
 		2C6393421F743F15004953A3 /* SessionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6393411F743F15004953A3 /* SessionsViewController.swift */; };
 		2C6393441F743F2F004953A3 /* SessionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6393431F743F2F004953A3 /* SessionViewController.swift */; };
-		2C6393481F743F73004953A3 /* misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6393471F743F73004953A3 /* misc.swift */; };
-		2C63934A1F743F84004953A3 /* dataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6393491F743F84004953A3 /* dataUtils.swift */; };
+		2C6393481F743F73004953A3 /* UiUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6393471F743F73004953A3 /* UiUtils.swift */; };
 		2C63934D1F745CBE004953A3 /* VoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C63934C1F745CBE004953A3 /* VoteViewController.swift */; };
-		2C63934F1F746C18004953A3 /* CoreDataResponderBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C63934E1F746C18004953A3 /* CoreDataResponderBase.swift */; };
-		2CFEF2831F7AEF4E002F4CB5 /* VotesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEF2821F7AEF4E002F4CB5 /* VotesManager.swift */; };
 		82C4058F8B9B8596DB537272 /* Pods_konfswift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87320A424782A8660617C3A8 /* Pods_konfswift.framework */; };
 		AED4C0B52C52BDA7217694F1 /* Pods_konfswiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99D4C7A4659C4292E0497583 /* Pods_konfswiftTests.framework */; };
 		B3F8ECF020652B63006020B0 /* konfSwiftFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8ECEC20652B4A006020B0 /* konfSwiftFramework.framework */; };
@@ -58,30 +49,20 @@
 
 /* Begin PBXFileReference section */
 		2C024B191F7494B400A7EAEC /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
-		2C2AA3081F72F31F004DA532 /* KonfService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KonfService.swift; sourceTree = "<group>"; };
-		2C31CF181F7ABCE30038816F /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
-		2C31CF1A1F7ABF830038816F /* KonfLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KonfLoader.swift; sourceTree = "<group>"; };
-		2C3E11391F75AB270023B4BA /* FavoritesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesManager.swift; sourceTree = "<group>"; };
 		2C50FD901F729FE000B3F845 /* konfswift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = konfswift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C50FD931F729FE000B3F845 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2C50FD981F729FE000B3F845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		2C50FD9B1F729FE000B3F845 /* konfswift.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = konfswift.xcdatamodel; sourceTree = "<group>"; };
 		2C50FD9D1F729FE000B3F845 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2C50FDA01F729FE000B3F845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2C50FDA21F729FE000B3F845 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C50FDA71F729FE000B3F845 /* konfswiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = konfswiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C50FDAB1F729FE000B3F845 /* konfswiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = konfswiftTests.swift; sourceTree = "<group>"; };
 		2C50FDAD1F729FE000B3F845 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2C50FDB61F72A1E800B3F845 /* konfswift-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "konfswift-Bridging-Header.h"; sourceTree = "<group>"; };
-		2C63933D1F741248004953A3 /* dateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dateUtils.swift; sourceTree = "<group>"; };
 		2C6393411F743F15004953A3 /* SessionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsViewController.swift; sourceTree = "<group>"; };
 		2C6393431F743F2F004953A3 /* SessionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionViewController.swift; sourceTree = "<group>"; };
-		2C6393471F743F73004953A3 /* misc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = misc.swift; sourceTree = "<group>"; };
-		2C6393491F743F84004953A3 /* dataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dataUtils.swift; sourceTree = "<group>"; };
+		2C6393471F743F73004953A3 /* UiUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UiUtils.swift; sourceTree = "<group>"; };
 		2C63934B1F744CA4004953A3 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		2C63934C1F745CBE004953A3 /* VoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteViewController.swift; sourceTree = "<group>"; };
-		2C63934E1F746C18004953A3 /* CoreDataResponderBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataResponderBase.swift; sourceTree = "<group>"; };
-		2CFEF2821F7AEF4E002F4CB5 /* VotesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesManager.swift; sourceTree = "<group>"; };
 		3AD1B286AB3044DE546C83D1 /* Pods-konfswift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-konfswift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-konfswift/Pods-konfswift.debug.xcconfig"; sourceTree = "<group>"; };
 		3F8F328F75A7A47133925362 /* Pods-konfswiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-konfswiftTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-konfswiftTests/Pods-konfswiftTests.release.xcconfig"; sourceTree = "<group>"; };
 		82B39A882B392FCA825017DE /* Pods-konfswiftTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-konfswiftTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-konfswiftTests/Pods-konfswiftTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -112,20 +93,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2C4211F11F72A9DF00863233 /* data */ = {
-			isa = PBXGroup;
-			children = (
-				2C2AA3081F72F31F004DA532 /* KonfService.swift */,
-				2C31CF1A1F7ABF830038816F /* KonfLoader.swift */,
-				2C31CF181F7ABCE30038816F /* NetworkService.swift */,
-				2C6393491F743F84004953A3 /* dataUtils.swift */,
-				2C63934E1F746C18004953A3 /* CoreDataResponderBase.swift */,
-				2C3E11391F75AB270023B4BA /* FavoritesManager.swift */,
-				2CFEF2821F7AEF4E002F4CB5 /* VotesManager.swift */,
-			);
-			path = data;
-			sourceTree = "<group>";
-		};
 		2C50FD871F729FE000B3F845 = {
 			isa = PBXGroup;
 			children = (
@@ -151,7 +118,6 @@
 			isa = PBXGroup;
 			children = (
 				2C63933F1F743EDE004953A3 /* ui */,
-				2C4211F11F72A9DF00863233 /* data */,
 				2CD98EF21F72C24F00BB98E6 /* util */,
 				2C6393401F743EE5004953A3 /* resources */,
 				2C50FD971F729FE000B3F845 /* Main.storyboard */,
@@ -186,7 +152,6 @@
 			children = (
 				2C50FD9D1F729FE000B3F845 /* Assets.xcassets */,
 				2C50FD9F1F729FE000B3F845 /* LaunchScreen.storyboard */,
-				2C50FD9A1F729FE000B3F845 /* konfswift.xcdatamodeld */,
 			);
 			path = resources;
 			sourceTree = "<group>";
@@ -194,9 +159,7 @@
 		2CD98EF21F72C24F00BB98E6 /* util */ = {
 			isa = PBXGroup;
 			children = (
-				2C50FDB61F72A1E800B3F845 /* konfswift-Bridging-Header.h */,
-				2C63933D1F741248004953A3 /* dateUtils.swift */,
-				2C6393471F743F73004953A3 /* misc.swift */,
+				2C6393471F743F73004953A3 /* UiUtils.swift */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -461,20 +424,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C63934F1F746C18004953A3 /* CoreDataResponderBase.swift in Sources */,
-				2C2AA3091F72F31F004DA532 /* KonfService.swift in Sources */,
-				2C6393481F743F73004953A3 /* misc.swift in Sources */,
+				2C6393481F743F73004953A3 /* UiUtils.swift in Sources */,
 				2C6393421F743F15004953A3 /* SessionsViewController.swift in Sources */,
 				2C024B1A1F7494B400A7EAEC /* AboutViewController.swift in Sources */,
-				2CFEF2831F7AEF4E002F4CB5 /* VotesManager.swift in Sources */,
-				2C50FD9C1F729FE000B3F845 /* konfswift.xcdatamodeld in Sources */,
-				2C63933E1F741248004953A3 /* dateUtils.swift in Sources */,
-				2C3E113A1F75AB270023B4BA /* FavoritesManager.swift in Sources */,
-				2C63934A1F743F84004953A3 /* dataUtils.swift in Sources */,
 				2C63934D1F745CBE004953A3 /* VoteViewController.swift in Sources */,
 				2C6393441F743F2F004953A3 /* SessionViewController.swift in Sources */,
-				2C31CF1B1F7ABF830038816F /* KonfLoader.swift in Sources */,
-				2C31CF191F7ABCE30038816F /* NetworkService.swift in Sources */,
 				2C50FD941F729FE000B3F845 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -632,7 +586,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.kotlinlang.konfswift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "konfswift/util/konfswift-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -659,7 +613,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.kotlinlang.konfswift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "konfswift/util/konfswift-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -728,19 +682,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		2C50FD9A1F729FE000B3F845 /* konfswift.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				2C50FD9B1F729FE000B3F845 /* konfswift.xcdatamodel */,
-			);
-			currentVersion = 2C50FD9B1F729FE000B3F845 /* konfswift.xcdatamodel */;
-			path = konfswift.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 2C50FD881F729FE000B3F845 /* Project object */;
 }

@@ -6,7 +6,7 @@ class VoteViewController : UIViewController {
     private let repository = KSFDataRepository(uuid: AppDelegate.me.userUuid)
 
     var session: KSFSession!
-    
+
 
     @IBOutlet private weak var titleLabel: UILabel!
 
@@ -54,7 +54,14 @@ class VoteViewController : UIViewController {
             session: session,
             rating: rating,
             onError: { error in
-                self.showPopupText(title: "Can't set rating")
+                switch (error) {
+                case KSFDataRepositoryCompanion().early_SUBMITTION_ERROR:
+                    self.showPopupText(title: "Too early to set rating")
+                case KSFDataRepositoryCompanion().late_SUBMITTION_ERROR:
+                    self.showPopupText(title: "Too late to set rating")
+                default:
+                    self.showPopupText(title: "Can't set rating - unknown error")
+                }
                 return KSFStdlibUnit()
             },
             onComplete: { newRating in

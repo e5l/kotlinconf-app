@@ -3,7 +3,6 @@ import TagListView_ObjC
 import konfSwiftFramework
 
 class SessionViewController : UIViewController, UITableViewDataSource, UITableViewDelegate {
-    private let favoritesManager = FavoritesManager()
     private let repository = KSFDataRepository(uuid: AppDelegate.me.userUuid)
 
     var session: KSFSession!

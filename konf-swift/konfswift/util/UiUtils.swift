@@ -1,6 +1,6 @@
 import UIKit
 import MBProgressHUD
-import CoreData
+import SDWebImage
 
 extension UIImage {
     func circularImage(to size: CGSize? = nil) -> UIImage {
@@ -65,18 +65,26 @@ extension UIViewController {
     }
 }
 
-extension NSManagedObjectContext {
-    func asPrivateThreadContext() -> NSManagedObjectContext {
-        let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        moc.parent = self
-        return moc
-    }
+extension UIImageView {
+    private static let PLACEHOLDER_IMAGE = UIImage.init(named: "user_default")?.circularImage()
 
-    func entityDescription<T>(for type: T.Type) -> NSEntityDescription where T : NSFetchRequestResult {
-        return NSEntityDescription.entity(forEntityName: String(describing: type), in: self)!
-    }
-}
+    func loadUserIcon(url: String?) {
+        let completionBlock: (UIImage?, Error?, SDImageCacheType, URL?) -> () = { (image, error, cacheType, imageURL) in
+            if let existingImage = image {
+                self.image = existingImage.circularImage()
+            }
+        }
 
-func NSMakeFetchRequest<T>(for type: T.Type) -> NSFetchRequest<T> where T : NSFetchRequestResult {
-    return NSFetchRequest(entityName: String(describing: type))
+        let nsUrl: URL?
+        if let setUrl = url {
+            nsUrl = URL(string: setUrl)
+        } else {
+            nsUrl = nil
+        }
+
+        self.sd_setImage(
+                with: nsUrl,
+                placeholderImage: UIImageView.PLACEHOLDER_IMAGE,
+                completed: completionBlock)
+    }
 }

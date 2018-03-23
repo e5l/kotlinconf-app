@@ -5,7 +5,7 @@ import konfSwiftFramework
 class SessionsViewController: UITableViewController {
     private static let SEND_ID_ONCE_KEY = "sendIfOnce"
 
-    private let repository: KSFDataRepository = KSFDataRepository(uuid: AppDelegate.me.userUuid)
+    private lazy var repository: KSFDataRepository = KSFDataRepository(uuid: AppDelegate.me.userUuid)
 
     private var mode: KSFDataRepositorySessionsListMode = .all
 
@@ -116,19 +116,5 @@ class SessionsTableViewCell : UITableViewCell {
     func setup(for session: KSFSession) {
         titleLabel.text = session.title
         dateLabel.text = KSFUtil.renderDate(date: session.startsAt!)
-    }
-}
-
-class BreakTableViewCell : UITableViewCell {
-    @IBOutlet weak var titleLabel: UILabel!
-
-    private lazy var setBackground: () -> () = {
-        self.backgroundColor = UIColor(patternImage: UIImage(named: "striped_bg")!)
-        return {}
-    }()
-
-    func setup(for session: KSession) {
-        setBackground()
-        titleLabel.text = session.title
     }
 }
