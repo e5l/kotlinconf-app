@@ -28,6 +28,8 @@
 		2CFEF2831F7AEF4E002F4CB5 /* VotesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFEF2821F7AEF4E002F4CB5 /* VotesManager.swift */; };
 		82C4058F8B9B8596DB537272 /* Pods_konfswift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87320A424782A8660617C3A8 /* Pods_konfswift.framework */; };
 		AED4C0B52C52BDA7217694F1 /* Pods_konfswiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99D4C7A4659C4292E0497583 /* Pods_konfswiftTests.framework */; };
+		B3F8ECF020652B63006020B0 /* konfSwiftFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8ECEC20652B4A006020B0 /* konfSwiftFramework.framework */; };
+		B3F8ECF120652B63006020B0 /* konfSwiftFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8ECEC20652B4A006020B0 /* konfSwiftFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,12 +43,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B39A1E51206504EA00E0BA72 /* Embed Frameworks */ = {
+		B3F8ECF220652B63006020B0 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B3F8ECF120652B63006020B0 /* konfSwiftFramework.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -85,6 +88,7 @@
 		87320A424782A8660617C3A8 /* Pods_konfswift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_konfswift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		99D4C7A4659C4292E0497583 /* Pods_konfswiftTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_konfswiftTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A41FE60CFCB7748B63FEC8FD /* Pods-konfswift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-konfswift.release.xcconfig"; path = "Pods/Target Support Files/Pods-konfswift/Pods-konfswift.release.xcconfig"; sourceTree = "<group>"; };
+		B3F8ECEC20652B4A006020B0 /* konfSwiftFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = konfSwiftFramework.framework; path = build/konan/bin/xcode/konfSwiftFramework.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +97,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82C4058F8B9B8596DB537272 /* Pods_konfswift.framework in Frameworks */,
+				B3F8ECF020652B63006020B0 /* konfSwiftFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,6 +215,7 @@
 		C4FEB15DDCA083DE8665D19F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3F8ECEC20652B4A006020B0 /* konfSwiftFramework.framework */,
 				87320A424782A8660617C3A8 /* Pods_konfswift.framework */,
 				99D4C7A4659C4292E0497583 /* Pods_konfswiftTests.framework */,
 			);
@@ -230,7 +236,7 @@
 				2C50FD8E1F729FE000B3F845 /* Resources */,
 				0C832F21F31C62782FFBD7A2 /* [CP] Embed Pods Frameworks */,
 				0187011DA1DCD661823ACBAC /* [CP] Copy Pods Resources */,
-				B39A1E51206504EA00E0BA72 /* Embed Frameworks */,
+				B3F8ECF220652B63006020B0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -416,7 +422,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export JAVA_HOME=`/usr/libexec/java_home -v 1.8`\n\ncase \"$PLATFORM_NAME\" in\niphoneos)\nTARGET=ios_arm64\nTASK=compileKonanKonfSwiftFrameworkIos_arm64\n;;\niphonesimulator)\nTARGET=ios_x64\nTASK=compileKonanKonfSwiftFrameworkIos_x64\n;;\n*)\necho \"Unknown platform: $PLATFORN_NAME\"\nexit 1\n;;\nesac\n\npwd\necho \"$TARGET\"\n\nmkdir -p \"$SRCROOT/build/konan/bin/\"\nrm -f \"$SRCROOT/build/konan/bin/xcode\"\ncp -r \"$SRCROOT/../konf-swift-framework/build/konan/bin/$TARGET\" \"$SRCROOT/build/konan/bin/xcode\"\n\n\ncd ..\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" \"$TASK\"";
+			shellScript = "export JAVA_HOME=`/usr/libexec/java_home -v 1.8`\n\ncase \"$PLATFORM_NAME\" in\niphoneos)\nTARGET=ios_arm64\nTASK=compileKonanKonfSwiftFrameworkIos_arm64\n;;\niphonesimulator)\nTARGET=ios_x64\nTASK=compileKonanKonfSwiftFrameworkIos_x64\n;;\n*)\necho \"Unknown platform: $PLATFORN_NAME\"\nexit 1\n;;\nesac\n\npwd\necho \"$TARGET\"\n\nmkdir -p \"$SRCROOT/build/konan/bin/\"\nrm -rf \"$SRCROOT/build/konan/bin/xcode\"\ncp -r \"$SRCROOT/../konf-swift-framework/build/konan/bin/$TARGET\" \"$SRCROOT/build/konan/bin/xcode\"\n\n\ncd ..\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" \"$TASK\"";
 		};
 		CB1C430533DB16B42B1719C9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -618,6 +624,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)-framework/build/konan/bin/ios_x64",
 					"$(PROJECT_DIR)/build/konan/bin/xcode",
+					"$(PROJECT_DIR)/build/konan/bin/xcode/ios_x64",
 				);
 				INFOPLIST_FILE = konfswift/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -644,6 +651,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)-framework/build/konan/bin/ios_x64",
 					"$(PROJECT_DIR)/build/konan/bin/xcode",
+					"$(PROJECT_DIR)/build/konan/bin/xcode/ios_x64",
 				);
 				INFOPLIST_FILE = konfswift/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
