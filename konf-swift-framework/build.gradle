@@ -33,3 +33,7 @@ konanArtifacts {
         }
     }
 }
+
+dependencies {
+    expectedBy project(':common')
+}

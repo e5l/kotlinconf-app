@@ -4,6 +4,7 @@ import android.arch.lifecycle.*
 import android.content.*
 import android.content.Context.*
 import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.android.*
 import kotlinx.serialization.json.*
 import org.jetbrains.anko.*
 import org.jetbrains.kotlinconf.*
@@ -95,24 +96,18 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
     }
 
     suspend fun setFavorite(sessionId: String, isFavorite: Boolean) {
-        try {
-            if (isFavorite) {
-                addLocalFavorite(sessionId)
-                kotlinConfApi.postFavorite(Favorite(sessionId))
-            } else {
-                deleteLocalFavorite(sessionId)
-                kotlinConfApi.deleteFavorite(Favorite(sessionId))
-            }
-        } catch (cause: Throwable) {
-            println(cause)
+        if (isFavorite) addLocalFavorite(sessionId) else deleteLocalFavorite(sessionId)
+
+        withContext(CommonPool) {
+            if (isFavorite) kotlinConfApi.postFavorite(Favorite(sessionId))
+            else kotlinConfApi.deleteFavorite(Favorite(sessionId))
         }
     }
 
-    private fun getAllLocalRatings(): Map<String, SessionRating> {
-        return ratingPreferences.all.mapNotNull { entry ->
-            SessionRating.valueOf(entry.value as Int)?.let { rating -> entry.key to rating }
-        }.toMap()
-    }
+    private fun getAllLocalRatings(): Map<String, SessionRating> =
+            ratingPreferences.all.mapNotNull { entry ->
+                SessionRating.valueOf(entry.value as Int)?.let { rating -> entry.key to rating }
+            }.toMap()
 
     private fun saveLocalRating(sessionId: String, rating: SessionRating) {
         ratingPreferences.edit().putInt(sessionId, rating.value).apply()
@@ -127,29 +122,36 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
     suspend fun addRating(sessionId: String, rating: SessionRating) {
         _ratings.value = getAllLocalRatings() + (sessionId to rating)
 
-        try {
-            kotlinConfApi.postVote(Vote(sessionId = sessionId, rating = rating.value))
-            saveLocalRating(sessionId, rating)
-        } catch (cause: ApiException) {
-            _ratings.value = getAllLocalRatings()
-            when (cause.response.statusCode) {
-                HTTP_COME_BACK_LATER -> onError?.invoke(Error.EARLY_TO_VOTE)
-                HTTP_TOO_LATE -> onError?.invoke(Error.LATE_TO_VOTE)
-                else -> onError?.invoke(Error.FAILED_TO_POST_RATING)
+        withContext(CommonPool) {
+            try {
+                kotlinConfApi.postVote(Vote(sessionId = sessionId, rating = rating.value))
+                withContext(UI) { saveLocalRating(sessionId, rating) }
+            } catch (cause: ApiException) {
+                withContext(UI) { _ratings.value = getAllLocalRatings()
+                when (cause.response.statusCode) {
+                    HTTP_COME_BACK_LATER -> onError?.invoke(Error.EARLY_TO_VOTE)
+                    HTTP_TOO_LATE -> onError?.invoke(Error.LATE_TO_VOTE)
+                    else -> onError?.invoke(Error.FAILED_TO_POST_RATING)
+                }
+                }
+            } catch (cause: Throwable) {
+                withContext(UI) {
+                    onError?.invoke(Error.FAILED_TO_POST_RATING)
+                }
             }
-        } catch (cause: Throwable) {
-            onError?.invoke(Error.FAILED_TO_POST_RATING)
         }
     }
 
     suspend fun removeRating(sessionId: String) {
         _ratings.value = getAllLocalRatings() - sessionId
-        try {
-            kotlinConfApi.deleteVote(Vote(sessionId = sessionId))
-            deleteLocalRating(sessionId)
-        } catch (cause: Throwable) {
-            _ratings.value = getAllLocalRatings()
-            onError?.invoke(Error.FAILED_TO_DELETE_RATING)
+        withContext(CommonPool) {
+            try {
+                kotlinConfApi.deleteVote(Vote(sessionId = sessionId))
+                withContext(UI) { deleteLocalRating(sessionId) }
+            } catch (cause: Throwable) {
+                _ratings.value = getAllLocalRatings()
+                onError?.invoke(Error.FAILED_TO_DELETE_RATING)
+            }
         }
     }
 

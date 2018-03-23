@@ -81,7 +81,7 @@ class DataRepository(val uuid: String) {
     fun setRating(
             session: Session,
             rating: SessionRating,
-            onError: (Exception) -> Unit,
+            onError: (Throwable) -> Unit,
             onComplete: (SessionRating?) -> Unit
     ) {
         val currentRating = getRating(session)
@@ -93,21 +93,17 @@ class DataRepository(val uuid: String) {
         runSuspend {
             try {
                 val vote = Vote(session.id, rating.value)
-                val code = if (newRating != null) {
-                    api.postVote(vote)
-                } else {
-                    api.deleteVote(vote)
-                }
-                when (VoteActionResult.fromCode(code)) {
+                if (newRating != null) api.postVote(vote) else api.deleteVote(vote)
+                setLocalRating(session, rating = newRating)
+                onComplete(newRating)
+            } catch (cause: ApiException) {
+                val code = VoteActionResult.fromCode(cause.response.statusCode)
+                when (code) {
                     VoteActionResult.TOO_EARLY -> onError(EARLY_SUBMITTION_ERROR)
                     VoteActionResult.TOO_LATE -> onError(LATE_SUBMITTION_ERROR)
-                    else -> {
-                        setLocalRating(session, rating = newRating)
-                        onComplete(newRating)
-                    }
                 }
-            } catch (e: Exception) {
-                onError(e)
+            } catch (cause: Throwable) {
+                onError(cause)
             }
         }
     }

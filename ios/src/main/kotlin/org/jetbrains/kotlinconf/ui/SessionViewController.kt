@@ -156,7 +156,7 @@ class SessionViewController(aDecoder: NSCoder) : UIViewController(aDecoder) {
         val progressPopup = showIndeterminateProgress("Submitting…")
 
         val errorHandler = createErrorHandler("Unable to send vote") { progressPopup.hideAnimated(true) }
-        val wrappedErrorHandler = { error: Exception ->
+        val wrappedErrorHandler = { error: Throwable ->
             progressPopup.hideAnimated(true)
 
             when (error) {

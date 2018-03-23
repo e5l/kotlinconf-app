@@ -4,12 +4,8 @@ import android.app.Application
 import kotlinx.coroutines.experimental.*
 import org.jetbrains.kotlinconf.model.KotlinConfDataRepository
 import kotlinx.coroutines.experimental.android.UI
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import org.jetbrains.anko.*
 import org.jetbrains.kotlinconf.api.*
-import retrofit2.Retrofit
-import ru.gildor.coroutines.retrofit.awaitResult
 import java.util.*
 
 class KotlinConfApplication : Application(), AnkoLogger {
@@ -17,8 +13,13 @@ class KotlinConfApplication : Application(), AnkoLogger {
 
     override fun onCreate() {
         super.onCreate()
-        val userId = getUserId()
 
+        Thread.setDefaultUncaughtExceptionHandler { t, cause ->
+            println("APPLICATION ERROR: $cause")
+            cause.printStackTrace()
+        }
+
+        val userId = getUserId()
         repository.userId = userId
         repository.onError = { action ->
             when (action) {
