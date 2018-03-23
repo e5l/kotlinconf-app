@@ -1,11 +1,13 @@
 import UIKit
 import TagListView_ObjC
+import konfSwiftFramework
 
 class SessionViewController : UIViewController, UITableViewDataSource, UITableViewDelegate {
     private let favoritesManager = FavoritesManager()
+    private let repository = KSFDataRepository(uuid: AppDelegate.me.userUuid)
 
-    var session: KSession!
-    var speakers: [KSpeaker] = []
+    var session: KSFSession!
+    var speakers: [KSFSpeaker] = []
 
     @IBOutlet private weak var scrollView: UIScrollView!
     @IBOutlet private weak var titleLabel: UILabel!
@@ -19,21 +21,21 @@ class SessionViewController : UIViewController, UITableViewDataSource, UITableVi
         guard let session = self.session else { return }
 
         titleLabel.text = session.title
-        timeLabel.text = renderDates(startDate: session.startsAt, endDate: session.endsAt)
-        descriptionLabel.text = session.desc
+        timeLabel.text = KSFUtil.renderInterval(start: session.startsAt!, end: session.endsAt!)
+        descriptionLabel.text = session.description ?? ""
         usersTable.reloadData()
 
         updateFavoriteButtonTitle()
 
-        speakers = fetchSpeakers()
+        speakers = repository.findSortedSpeakers(session: session)
 
         tags.removeAllTags()
 
-        if let room = fetchRoom() {
+        if let room = repository.findRoom(session: session) {
             tags.addTag(room.name)
         }
 
-        for categoryItem in fetchCategoryItems() {
+        for categoryItem in repository.findCategoryItems(session: session) {
             tags.addTag(categoryItem.name)
         }
 
@@ -56,13 +58,14 @@ class SessionViewController : UIViewController, UITableViewDataSource, UITableVi
     }
 
     private func updateFavoriteButtonTitle(isFavorite: Bool? = nil) {
-        let shouldCheck = isFavorite ?? favoritesManager.isFavorite(session: session)
+        let shouldCheck = isFavorite ?? repository.isFavorite(session: session)
         favoriteButton.setTitle(shouldCheck ? "❤️" : "🖤", for: .normal)
     }
 
     @IBAction func favorited(_ sender: Any) {
-        favoritesManager.toggleFavorite(for: session, errorHandler: createErrorHandler("Unable to send request")) {
-            self.updateFavoriteButtonTitle(isFavorite: $0)
+        repository.toggleFavorite(session: session) {
+            self.updateFavoriteButtonTitle(isFavorite: $0 != 0)
+            return KSFStdlibUnit()
         }
     }
 
@@ -89,10 +92,12 @@ class SessionViewController : UIViewController, UITableViewDataSource, UITableVi
 
         let alert = UIAlertController(title: speaker.fullName, message: speaker.bio, preferredStyle: .actionSheet)
 
-        for link in speaker.link ?? [] {
-            guard let action = link.getAction() else { continue }
-            alert.addAction(action)
-        }
+        // BUG?: speaker.links has type [Any]
+        
+//        for link in speaker.links ?? [] {
+//            guard let action = link.getAction() else { continue }
+//            alert.addAction(action)
+//        }
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
@@ -100,48 +105,7 @@ class SessionViewController : UIViewController, UITableViewDataSource, UITableVi
     }
 }
 
-fileprivate extension SessionViewController {
-    func fetchRoom() -> KRoom? {
-        let moc = AppDelegate.me.managedObjectContext
-
-        let request = NSMakeFetchRequest(for: KRoom.self)
-        request.predicate = NSPredicate(format: "id == %d", session.roomId)
-        request.fetchLimit = 1
-
-        return (try? moc.fetch(request))?.first
-    }
-
-    func fetchSpeakers() -> [KSpeaker] {
-        let moc = AppDelegate.me.managedObjectContext
-
-        let request = NSMakeFetchRequest(for: KSpeaker.self)
-        request.predicate = NSPredicate(format: "id IN %@", session.speakerIds ?? [])
-
-        let unsortedSpeakers: [KSpeaker] = (try? moc.fetch(request)) ?? []
-
-        var sortedSpeakers = [KSpeaker]()
-        sortedSpeakers.reserveCapacity(unsortedSpeakers.count)
-
-        for speakerId in (session.speakerIds as? [String]) ?? [] {
-            guard let speaker = (unsortedSpeakers.first { $0.id == speakerId }) else { continue }
-            sortedSpeakers.append(speaker)
-        }
-
-        return sortedSpeakers
-    }
-
-    func fetchCategoryItems() -> [KCategoryItem] {
-        let moc = AppDelegate.me.managedObjectContext
-
-        let request = NSMakeFetchRequest(for: KCategoryItem.self)
-        request.predicate = NSPredicate(format: "id IN %@", session.categoryItemIds ?? [])
-        request.sortDescriptors = [ NSSortDescriptor(key: "id", ascending: true) ]
-
-        return (try? moc.fetch(request)) ?? []
-    }
-}
-
-fileprivate extension KLink {
+fileprivate extension KSFLink {
     func getAction() -> UIAlertAction? {
         guard
             let linkType = self.linkType,
@@ -186,7 +150,7 @@ class SessionUserTableViewCell : UITableViewCell {
         self.selectedBackgroundView = bgColorView
     }
 
-    func setup(for user: KSpeaker) {
+    func setup(for user: KSFSpeaker) {
         nameLabel.text = user.fullName ?? "Anonymous"
         icon.loadUserIcon(url: user.profilePicture)
     }

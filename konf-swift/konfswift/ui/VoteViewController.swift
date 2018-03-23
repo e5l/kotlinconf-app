@@ -1,9 +1,12 @@
 import UIKit
+import konfSwiftFramework
 
 class VoteViewController : UIViewController {
-    private let votesManager = VotesManager()
+    //private let votesManager = VotesManager()
+    private let repository = KSFDataRepository(uuid: AppDelegate.me.userUuid)
 
-    var session: KSession!
+    var session: KSFSession!
+    
 
     @IBOutlet private weak var titleLabel: UILabel!
 
@@ -18,12 +21,12 @@ class VoteViewController : UIViewController {
         }
     }
 
-    private func highlightRatingButtons(rating: KSessionRating? = nil) {
-        let currentRating = rating ?? votesManager.getRating(for: session)
+    private func highlightRatingButtons(rating: KSFSessionRating? = nil) {
+        let currentRating = rating ?? repository.getRating(session: session)
 
-        let buttons: [KSessionRating: UIButton] = [
+        let buttons: [KSFSessionRating: UIButton] = [
             .good: goodButton,
-            .soso: sosoButton,
+            .ok: sosoButton,
             .bad: badButton
         ]
 
@@ -44,18 +47,23 @@ class VoteViewController : UIViewController {
         }
     }
 
-    private func reportRating(_ rating: KSessionRating) {
+    private func reportRating(_ rating: KSFSessionRating) {
         guard let session = self.session else { return }
 
-        votesManager.setRating(
-            for: session,
+        repository.setRating(
+            session: session,
             rating: rating,
-            errorHandler: createErrorHandler("Unable to send vote")
-        ) { newRating in
+            onError: { error in
+                self.showPopupText(title: "Can't set rating")
+                return KSFStdlibUnit()
+            },
+            onComplete: { newRating in
             self.highlightRatingButtons(rating: newRating)
             self.showPopupText(
                 title: newRating != nil ? "Thank you for the feedback!" : "Your vote was cleared.")
-        }
+                return KSFStdlibUnit()
+            }
+        )
     }
 
     @IBAction private func goodPressed(_ sender: Any) {
@@ -63,7 +71,7 @@ class VoteViewController : UIViewController {
     }
 
     @IBAction private func sosoPressed(_ sender: Any) {
-        reportRating(.soso)
+        reportRating(.ok)
     }
 
     @IBAction private func badPressed(_ sender: Any) {
