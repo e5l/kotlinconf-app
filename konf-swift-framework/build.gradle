@@ -15,20 +15,20 @@ buildscript {
 konan.targets = ['ios_x64', 'ios_arm64']
 
 konanArtifacts {
-    framework('kotlin-swift-framework') {
+    framework('konfSwiftFramework') {
         enableMultiplatform true
 
         target('ios_arm64') {
             libraries {
                 klib 'serialization_ios_arm64'
-                klib 'http-client-native_ios_arm64'
+                klib 'http_client_native_ios_arm64'
             }
         }
 
         target('ios_x64') {
             libraries {
                 klib 'serialization_ios_x64'
-                klib 'http-client-native_ios_x64'
+                klib 'http_client_native_ios_x64'
             }
         }
     }

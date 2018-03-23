@@ -1,5 +1,6 @@
 import UIKit
 import Groot
+import konfSwiftFramework
 
 @UIApplicationMain
 class AppDelegate: CoreDataResponderBase {
