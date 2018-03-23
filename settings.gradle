@@ -6,6 +6,7 @@ include 'common-jvm'
 include 'common-js'
 
 include 'ios'
+include 'konf-swift-framework'
 
 if (INCLUDE_ANDROID == "true") {
     include 'android', 'android:app'

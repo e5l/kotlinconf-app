@@ -1,0 +1,35 @@
+apply plugin: 'konan'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/jetbrains/kotlin-native-dependencies' }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$konan_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+konan.targets = ['ios_x64', 'ios_arm64']
+
+konanArtifacts {
+    framework('kotlin-swift-framework') {
+        enableMultiplatform true
+
+        target('ios_arm64') {
+            libraries {
+                klib 'serialization_ios_arm64'
+                klib 'http-client-native_ios_arm64'
+            }
+        }
+
+        target('ios_x64') {
+            libraries {
+                klib 'serialization_ios_x64'
+                klib 'http-client-native_ios_x64'
+            }
+        }
+    }
+}
