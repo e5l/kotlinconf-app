@@ -148,7 +148,12 @@ class DataRepository(val uuid: String) {
     val sessions: Map<Date, List<Session>>
         get() = _cachedSessions.orEmpty()
 
+    val hasModels: Boolean
+        get() = (AppContext.sessionsModels?.size ?: 0) > 0
+
     fun getSession(bucket: Int, idx: Int) = _cachedSessionsList?.getOrNull(bucket)?.second?.getOrNull(idx)
+
+    fun getSessionBucketSize(bucket: Int) = _cachedSessionsList?.getOrNull(bucket)?.second?.size ?: 0
 
     companion object {
         private val kHTTPStatusCodeComeBackLater = 477
