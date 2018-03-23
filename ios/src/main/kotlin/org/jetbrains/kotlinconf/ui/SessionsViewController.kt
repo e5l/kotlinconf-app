@@ -82,8 +82,6 @@ class SessionsViewController(aDecoder: NSCoder) :
             refreshFavorites()
             refreshVotes()
         }
-
-        registerUuid()
     }
 
     override fun viewWillAppear(animated: Boolean) {
@@ -93,7 +91,11 @@ class SessionsViewController(aDecoder: NSCoder) :
     private fun registerUuid() {
         // We have to register uuid each time we enter our app, cause the user db may be reset on server
         runSuspend {
-            KotlinConfApi.createUser(appDelegate.userUuid)
+            try {
+                KotlinConfApi.createUser(appDelegate.userUuid)
+            } catch (e: Throwable) {
+                println(e)
+            }
         }
     }
 
@@ -113,6 +115,7 @@ class SessionsViewController(aDecoder: NSCoder) :
         repository.updateSessions {
             hideProgress()
             updateResults()
+            registerUuid()
         }
     }
 
@@ -120,6 +123,7 @@ class SessionsViewController(aDecoder: NSCoder) :
         repository.updateFavorites {
             if (mode == SessionsListMode.FAVORITES) {
                 updateResults()
+                registerUuid()
             }
         }
     }
