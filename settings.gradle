@@ -7,7 +7,5 @@ include 'common-js'
 
 include 'ios'
 include 'konf-swift-framework'
+include 'android', 'android:app'
 
-if (INCLUDE_ANDROID == "true") {
-    include 'android', 'android:app'
-}
