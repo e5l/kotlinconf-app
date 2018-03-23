@@ -95,12 +95,16 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
     }
 
     suspend fun setFavorite(sessionId: String, isFavorite: Boolean) {
-        if (isFavorite) {
-            addLocalFavorite(sessionId)
-            kotlinConfApi.postFavorite(Favorite(sessionId))
-        } else {
-            deleteLocalFavorite(sessionId)
-            kotlinConfApi.deleteFavorite(Favorite(sessionId))
+        try {
+            if (isFavorite) {
+                addLocalFavorite(sessionId)
+                kotlinConfApi.postFavorite(Favorite(sessionId))
+            } else {
+                deleteLocalFavorite(sessionId)
+                kotlinConfApi.deleteFavorite(Favorite(sessionId))
+            }
+        } catch (cause: Throwable) {
+            println(cause)
         }
     }
 
@@ -198,7 +202,12 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
             return false
         }
 
-        val allData = kjson.parse<AllData>(allDataFile.readText()) ?: return false
+        val allData = try {
+            kjson.parse<AllData>(allDataFile.readText())
+        } catch (cause: Throwable) {
+            println(cause)
+            return false
+        }
 
         _data.value = allData
 

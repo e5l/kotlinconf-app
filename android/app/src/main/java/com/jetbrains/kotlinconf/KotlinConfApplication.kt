@@ -70,8 +70,6 @@ class KotlinConfApplication : Application(), AnkoLogger {
         return userId
     }
 
-    private suspend fun postUserId(userId: String): Boolean = KotlinConfApi.createUser(userId)
-
     companion object {
         const val USER_ID_KEY = "UserId"
     }
