@@ -2,11 +2,8 @@ import UIKit
 import konfSwiftFramework
 
 class VoteViewController : UIViewController {
-    //private let votesManager = VotesManager()
-    private let repository = KSFDataRepository(uuid: AppDelegate.me.userUuid)
-
+    private let konfService = AppDelegate.me.konfService
     var session: KSFSession!
-
 
     @IBOutlet private weak var titleLabel: UILabel!
 
@@ -22,7 +19,7 @@ class VoteViewController : UIViewController {
     }
 
     private func highlightRatingButtons(rating: KSFSessionRating? = nil) {
-        let currentRating = rating ?? repository.getRating(session: session)
+        let currentRating = rating ?? konfService.getRating(session: session)
 
         let buttons: [KSFSessionRating: UIButton] = [
             .good: goodButton,
@@ -50,25 +47,25 @@ class VoteViewController : UIViewController {
     private func reportRating(_ rating: KSFSessionRating) {
         guard let session = self.session else { return }
 
-        repository.setRating(
+        konfService.setRating(
             session: session,
             rating: rating,
             onError: { error in
                 switch (error) {
-                case KSFDataRepositoryCompanion().early_SUBMITTION_ERROR:
+                case KSFKonfServiceCompanion().early_SUBMITTION_ERROR:
                     self.showPopupText(title: "Too early to set rating")
-                case KSFDataRepositoryCompanion().late_SUBMITTION_ERROR:
+                case KSFKonfServiceCompanion().late_SUBMITTION_ERROR:
                     self.showPopupText(title: "Too late to set rating")
                 default:
                     self.showPopupText(title: "Can't set rating - unknown error")
                 }
-                return KSFStdlibUnit()
+                return KUnit
             },
             onComplete: { newRating in
             self.highlightRatingButtons(rating: newRating)
             self.showPopupText(
                 title: newRating != nil ? "Thank you for the feedback!" : "Your vote was cleared.")
-                return KSFStdlibUnit()
+                return KUnit
             }
         )
     }

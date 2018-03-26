@@ -3,10 +3,10 @@ import konfSwiftFramework
 
 class SessionsViewController: UITableViewController {
     private static let SEND_ID_ONCE_KEY = "sendIfOnce"
-
-    private lazy var repository: KSFDataRepository = KSFDataRepository(uuid: AppDelegate.me.userUuid)
-
-    private var mode: KSFDataRepositorySessionsListMode = .all
+    private lazy var konfService = AppDelegate.me.konfService
+    private var mode: KSFKonfServiceSessionsListMode = .all
+    
+    private var sessionsTableData: [[KSFSession]] = []
 
     @IBOutlet weak var pullToRefresh: UIRefreshControl!
 
@@ -15,14 +15,13 @@ class SessionsViewController: UITableViewController {
         self.mode = (segmentedControl.selectedSegmentIndex == 0) ? .all : .favorites
 
         self.updateResults()
-        if let tableView = self.tableView, repository.sessions.count > 0 {
+        if let tableView = self.tableView, sessionsTableData.count > 0 {
             tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
         }
     }
 
     override func viewDidLoad() {
-        let loadSessions = !repository.hasModels
-        if (loadSessions) {
+        if (mode == .all) {
             self.refreshSessions(self)
         } else {
             self.refreshFavorites()
@@ -34,37 +33,82 @@ class SessionsViewController: UITableViewController {
         let userDefaults = UserDefaults.standard
         guard !userDefaults.bool(forKey: SessionsViewController.SEND_ID_ONCE_KEY) else { return }
     
-        KSFDataRepositoryCompanion().registerUser(uuid: AppDelegate.me.userUuid, onComplete: { (succ) in
+        konfService.register(
+            onComplete: { (succ) in
             userDefaults.set(succ, forKey: SessionsViewController.SEND_ID_ONCE_KEY)
-            return KSFStdlibUnit()
-        })
+            return KUnit
+        }, onError: { (error) -> KSFStdlibUnit in return KUnit })
     }
 
     @IBAction func refreshSessions(_ sender: Any) {
-        repository.updateSessions {
+        konfService.refresh(onComplete: {
             self.pullToRefresh?.endRefreshing()
             self.updateResults()
             self.registerUuidIfNeeded()
-            return KSFStdlibUnit()
-        }
+            return KUnit
+        }, onError: { (error) -> KSFStdlibUnit in
+            return KUnit
+        })
     }
 
     private func refreshFavorites() {
-        repository.updateFavorites {
+        konfService.refreshFavorites(onComplete: {
             if (self.mode == .favorites) {
                 self.updateResults()
             }
-            return KSFStdlibUnit()
-        }
+            return KUnit
+        }, onError: { (error) -> KSFStdlibUnit in
+            return KUnit
+        })
     }
 
     private func refreshVotes() {
-        repository.updateVotes {return KSFStdlibUnit()}
+        konfService.refreshVotes(
+            onComplete: { return KUnit },
+            onError: { (error) -> KSFStdlibUnit in return KUnit }
+        )
     }
-
+    
+    /**
+     * Prepare TableView state
+     */
+    
     private func updateResults() {
-        repository.fetchSessions(mode: self.mode)
-        self.tableView?.reloadData()
+        switch self.mode {
+        case .all:
+            fillDataWith(sessions: konfService.sessions)
+            break
+        case .favorites:
+            fillDataWith(sessions: konfService.sessions.filter({ (session) -> Bool in
+                return konfService.isFavorite(session: session)
+            }))
+            break
+        default:
+            break
+        }
+
+        self.tableView?.reloadData()        
+    }
+    
+    private func fillDataWith(sessions: [KSFSession]) {
+        let sortedSessions = sessions.sorted(by: { (left, right) -> Bool in
+            let byComparator = left.compareTo(other: right)
+            if byComparator != 0 { return byComparator < 0 }
+            if left.roomId != right.roomId { return left.roomId!.compare(right.roomId!).rawValue > 0 }
+            if left.id != right.id { return left.id!.compare(right.id!).rawValue > 0 }
+            return false
+        })
+
+        sessionsTableData = []
+        sortedSessions.forEach({ (session) in
+            if sessionsTableData.count == 0 ||
+                sessionsTableData.last!.first!.startsAt!.compareTo(otherDate: session.startsAt!) != 0 {
+                sessionsTableData.append([session]);
+                return
+            }
+            
+            sessionsTableData[sessionsTableData.count - 1].append(session)
+        })
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -80,29 +124,27 @@ class SessionsViewController: UITableViewController {
                 let sessionViewController = segue.destination as! SessionViewController
                 let bucket = selectedPath.section
                 let row = selectedPath.row
-                guard let session = repository.getSession(bucket: Int32(bucket), idx: Int32(row)) else { return }
-                sessionViewController.session = session
+                if (sessionsTableData.count <= bucket || sessionsTableData[bucket].count <= row) { return }
+                sessionViewController.session = sessionsTableData[bucket][row]
             default: break
         }
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return repository.sessions.count
+        return sessionsTableData.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Int(repository.getSessionBucketSize(bucket: Int32(section)))
+        if sessionsTableData.count <= section { return 0 }
+        return sessionsTableData[section].count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Session", for: indexPath) as! SessionsTableViewCell
         let bucket = indexPath.section
         let row = indexPath.row
-        guard let session = repository.getSession(bucket: Int32(bucket), idx: Int32(row)) else {
-            return cell
-        }
-
-        cell.setup(for: session)
+        if sessionsTableData.count <= bucket || sessionsTableData[bucket].count <= row { return cell }
+        cell.setup(for: sessionsTableData[bucket][row])
         return cell
     }
 }

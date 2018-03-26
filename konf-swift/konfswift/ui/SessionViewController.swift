@@ -3,7 +3,7 @@ import TagListView_ObjC
 import konfSwiftFramework
 
 class SessionViewController : UIViewController, UITableViewDataSource, UITableViewDelegate {
-    private let repository = KSFDataRepository(uuid: AppDelegate.me.userUuid)
+    private let konfService = AppDelegate.me.konfService
 
     var session: KSFSession!
     var speakers: [KSFSpeaker] = []
@@ -26,18 +26,16 @@ class SessionViewController : UIViewController, UITableViewDataSource, UITableVi
 
         updateFavoriteButtonTitle()
 
-        speakers = repository.findSortedSpeakers(session: session)
+        let model = konfService.sessionsModels[session.id!]!
+        let it = model.speakers.iterator()
+        while (it.hasNext()) { speakers.append(it.next()! as! KSFSpeaker) }
 
         tags.removeAllTags()
 
-        if let room = repository.findRoom(session: session) {
-            tags.addTag(room.name)
+        if (model.room != nil) {
+            tags.addTag(model.room!)
         }
-
-        for categoryItem in repository.findCategoryItems(session: session) {
-            tags.addTag(categoryItem.name)
-        }
-
+        
         DispatchQueue.main.async {
             guard let usersTable = self.usersTable else { return }
 
@@ -57,15 +55,17 @@ class SessionViewController : UIViewController, UITableViewDataSource, UITableVi
     }
 
     private func updateFavoriteButtonTitle(isFavorite: Bool? = nil) {
-        let shouldCheck = isFavorite ?? repository.isFavorite(session: session)
+        let shouldCheck = isFavorite ?? konfService.isFavorite(session: session)
         favoriteButton.setTitle(shouldCheck ? "❤️" : "🖤", for: .normal)
     }
 
     @IBAction func favorited(_ sender: Any) {
-        repository.toggleFavorite(session: session) {
+        konfService.toggleFavorite(session: session, onComplete: {
             self.updateFavoriteButtonTitle(isFavorite: $0 != 0)
-            return KSFStdlibUnit()
-        }
+            return KUnit
+        }, onError: { (error) -> KSFStdlibUnit in
+            return KUnit
+        })
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

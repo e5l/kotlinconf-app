@@ -23,7 +23,7 @@ class KotlinConfDataRepository(private val context: Context) : AnkoLogger {
         JSON(nonstrict = true)
     }
 
-    private val kotlinConfApi: KotlinConfApi by lazy { KotlinConfApi(userId) }
+    private val kotlinConfApi: KonfRest by lazy { KonfRest(userId) }
 
     private val favoritePreferences: SharedPreferences by lazy {
         context.getSharedPreferences(FAVORITES_PREFERENCES_NAME, MODE_PRIVATE)

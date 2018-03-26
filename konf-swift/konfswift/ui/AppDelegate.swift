@@ -1,12 +1,20 @@
 import UIKit
 import konfSwiftFramework
 
+let KUnit = KSFStdlibUnit()
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     private static let GENERATE_ID_ONCE_KEY = "generateIdOnce"
     static let UUID_KEY = "vendorId"
+    public lazy var konfService = KSFKonfService(uuid: self.userUuid)
 
     var window: UIWindow?
+
+    var userUuid: String {
+        // Should be already set in `generateUuidIfNeeded`
+        return UserDefaults.standard.string(forKey: AppDelegate.UUID_KEY)!
+    }
 
     func application(
         _ application: UIApplication,
@@ -24,11 +32,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    var userUuid: String {
-        // Should be already set in `generateUuidIfNeeded`
-        return UserDefaults.standard.string(forKey: AppDelegate.UUID_KEY)!
-    }
-
     static var me: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
@@ -36,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     public func applicationWillTerminate(_ application: UIApplication) {
         self.saveContext()
     }
-
+    
     func saveContext() {
         // todo: save context
     }

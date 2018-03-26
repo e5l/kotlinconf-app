@@ -8,7 +8,7 @@ import kotlinx.serialization.json.*
 private val END_POINT = "api.kotlinconf.com"
 private typealias Config = HttpRequestBuilder.() -> Unit
 
-class KotlinConfApi(val userId: String) {
+class KonfRest(private val userId: String) {
 
     suspend fun getAll(): AllData =
             JSON.parse(AllData.serializer(), get("all", {}).withCheck().body)
@@ -37,19 +37,19 @@ class KotlinConfApi(val userId: String) {
 
     private suspend fun post(path: String, body: String, block: Config): HttpResponse =
             request(HttpMethod.Post, path, body) {
-                headers["ContentType"] = listOf("application/json")
+                headers["Content-Type"] = listOf("application/json")
                 block()
             }
 
     private suspend fun delete(path: String, body: String, block: Config): HttpResponse =
             request(HttpMethod.Delete, path, body) {
-                headers["ContentType"] = listOf("application/json")
+                headers["Content-Type"] = listOf("application/json")
                 block()
             }
 
     private suspend fun request(
             method: HttpMethod, path: String, body: String?, block: Config
-    ) = client.request {
+    ): HttpResponse = client.request {
         setupDefault()
         this.method = method
         url.encodedPath = "/$path"

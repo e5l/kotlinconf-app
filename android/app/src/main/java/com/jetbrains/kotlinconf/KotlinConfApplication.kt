@@ -47,7 +47,7 @@ class KotlinConfApplication : Application(), AnkoLogger {
             }
 
             val userIsNew = withContext(CommonPool) {
-                KotlinConfApi.createUser(userId)
+                KonfRest.createUser(userId)
             }
 
             // Get new data from server if new user was created (server db was cleaned)
