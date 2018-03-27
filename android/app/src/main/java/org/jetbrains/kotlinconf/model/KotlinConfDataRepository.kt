@@ -146,21 +146,17 @@ class KotlinConfDataRepository(
     }
 
     suspend fun addRating(session: SessionModel, rating: SessionRating) {
-        _ratings.value = getAllLocalRatings() + (session.id to rating)
-
         withContext(CommonPool) {
             try {
                 konfSerivce.setRating(session.origin, rating).get()
                 saveLocalRating(session.id, rating)
-            } catch (cause: ApiException) {
-                _ratings.value = getAllLocalRatings()
-                when (cause.response.statusCode) {
-                    HTTP_COME_BACK_LATER -> onError.invoke(Error.EARLY_TO_VOTE)
-                    HTTP_TOO_LATE -> onError.invoke(Error.LATE_TO_VOTE)
+                withContext(UI) { _ratings.value = getAllLocalRatings() + (session.id to rating) }
+            } catch (cause: Throwable) {
+                when (cause) {
+                    KonfService.EARLY_SUBMITTION_ERROR -> onError.invoke(Error.EARLY_TO_VOTE)
+                    KonfService.LATE_SUBMITTION_ERROR -> onError.invoke(Error.LATE_TO_VOTE)
                     else -> onError.invoke(Error.FAILED_TO_POST_RATING)
                 }
-            } catch (cause: Throwable) {
-                onError.invoke(Error.FAILED_TO_POST_RATING)
             }
         }
     }
