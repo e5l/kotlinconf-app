@@ -2,7 +2,7 @@ import UIKit
 import konfSwiftFramework
 
 class SessionsViewController: UITableViewController {
-    private static let SEND_ID_ONCE_KEY = "sendIfOnce"
+    private static let SEND_ID_ONCE_KEY = "send_uuid_once"
     private lazy var konfService = AppDelegate.me.konfService
     private var mode: KSFKonfServiceSessionsListMode = .all
     private var sessionsTableData: [[KSFSession]] = []
@@ -21,20 +21,24 @@ class SessionsViewController: UITableViewController {
 
     override func viewDidLoad() {
         if (mode == .all) {
-            konfService.register().then(block: { (result) -> KSFStdlibUnit in
-                self.refreshSessions(self)
-                
-                let userDefaults = UserDefaults.standard
-                guard !userDefaults.bool(forKey: SessionsViewController.SEND_ID_ONCE_KEY) else { return KUnit }
-
-                userDefaults.set(result as! Bool, forKey: SessionsViewController.SEND_ID_ONCE_KEY)
-                return KUnit
-            })
-            
+            if (!sendUuidIfNeeded()) { self.refreshSessions(self) }
         } else {
             self.refreshFavorites()
             self.refreshVotes()
         }
+    }
+    
+    private func sendUuidIfNeeded() -> Bool {
+        let userDefaults = UserDefaults.standard
+        guard !userDefaults.bool(forKey: SessionsViewController.SEND_ID_ONCE_KEY) else { return false }
+        
+        konfService.register().then(block: { (result) -> KSFStdlibUnit in
+            self.refreshSessions(self)
+            
+            userDefaults.set(result as! Bool, forKey: SessionsViewController.SEND_ID_ONCE_KEY)
+            return KUnit
+        })
+        return true
     }
     
     override func viewWillAppear(_ animated: Bool) {

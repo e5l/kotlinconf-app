@@ -91,13 +91,11 @@ class SessionViewController : UIViewController, UITableViewDataSource, UITableVi
         let speaker = speakers[indexPath.row]
 
         let alert = UIAlertController(title: speaker.fullName, message: speaker.bio, preferredStyle: .actionSheet)
-
-        // BUG?: speaker.links has type [Any]
         
-//        for link in speaker.links ?? [] {
-//            guard let action = link.getAction() else { continue }
-//            alert.addAction(action)
-//        }
+        for link in speaker.links ?? [] {
+            guard let action = (link as? KSFLink)?.getAction() else { continue }
+            alert.addAction(action)
+        }
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
