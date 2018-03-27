@@ -28,6 +28,8 @@ class SessionViewController : UIViewController, UITableViewDataSource, UITableVi
 
         let model = konfService.sessionsModels[session.id!]!
         let it = model.speakers.iterator()
+        
+        speakers = []
         while (it.hasNext()) { speakers.append(it.next()! as! KSFSpeaker) }
 
         tags.removeAllTags()

@@ -172,7 +172,7 @@ class KotlinConfDataRepository(
                 konfSerivce.deleteRating(session.origin).get()
                 deleteLocalRating(session.id)
             } catch (cause: Throwable) {
-                _ratings.value = getAllLocalRatings()
+                withContext(UI) { _ratings.value = getAllLocalRatings() }
                 onError.invoke(Error.FAILED_TO_DELETE_RATING)
             }
         }
