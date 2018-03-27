@@ -47,27 +47,22 @@ class VoteViewController : UIViewController {
     private func reportRating(_ rating: KSFSessionRating) {
         guard let session = self.session else { return }
 
-        konfService.setRating(
-            session: session,
-            rating: rating,
-            onError: { error in
-                switch (error) {
-                case KSFKonfServiceCompanion().early_SUBMITTION_ERROR:
-                    self.showPopupText(title: "Too early to set rating")
-                case KSFKonfServiceCompanion().late_SUBMITTION_ERROR:
-                    self.showPopupText(title: "Too late to set rating")
-                default:
-                    self.showPopupText(title: "Can't set rating - unknown error")
-                }
-                return KUnit
-            },
-            onComplete: { newRating in
+        konfService.setRating(session: session, rating: rating).then { (result) -> KSFStdlibUnit in
+            let newRating = result as? KSFSessionRating
             self.highlightRatingButtons(rating: newRating)
-            self.showPopupText(
-                title: newRating != nil ? "Thank you for the feedback!" : "Your vote was cleared.")
-                return KUnit
+            self.showPopupText(title: result != nil ? "Thank you for the feedback!" : "Your vote was cleared.")
+            return KUnit
+        }.catch { (error) -> KSFStdlibUnit in
+            switch (error) {
+            case KSFKonfServiceCompanion().early_SUBMITTION_ERROR:
+                self.showPopupText(title: "Too early to set rating")
+            case KSFKonfServiceCompanion().late_SUBMITTION_ERROR:
+                self.showPopupText(title: "Too late to set rating")
+            default:
+                self.showPopupText(title: "Can't set rating - unknown error")
             }
-        )
+            return KUnit
+        }
     }
 
     @IBAction private func goodPressed(_ sender: Any) {

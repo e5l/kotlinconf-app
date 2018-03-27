@@ -5,7 +5,6 @@ class SessionsViewController: UITableViewController {
     private static let SEND_ID_ONCE_KEY = "sendIfOnce"
     private lazy var konfService = AppDelegate.me.konfService
     private var mode: KSFKonfServiceSessionsListMode = .all
-    
     private var sessionsTableData: [[KSFSession]] = []
 
     @IBOutlet weak var pullToRefresh: UIRefreshControl!
@@ -14,7 +13,7 @@ class SessionsViewController: UITableViewController {
         guard let segmentedControl = sender as? UISegmentedControl else { return }
         self.mode = (segmentedControl.selectedSegmentIndex == 0) ? .all : .favorites
 
-        self.updateResults()
+        self.updateTableContent()
         if let tableView = self.tableView, sessionsTableData.count > 0 {
             tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
         }
@@ -22,58 +21,57 @@ class SessionsViewController: UITableViewController {
 
     override func viewDidLoad() {
         if (mode == .all) {
-            self.refreshSessions(self)
+            konfService.register().then(block: { (result) -> KSFStdlibUnit in
+                self.refreshSessions(self)
+                
+                let userDefaults = UserDefaults.standard
+                guard !userDefaults.bool(forKey: SessionsViewController.SEND_ID_ONCE_KEY) else { return KUnit }
+
+                userDefaults.set(result as! Bool, forKey: SessionsViewController.SEND_ID_ONCE_KEY)
+                return KUnit
+            })
+            
         } else {
             self.refreshFavorites()
             self.refreshVotes()
         }
     }
-
-    private func registerUuidIfNeeded() {
-        let userDefaults = UserDefaults.standard
-        guard !userDefaults.bool(forKey: SessionsViewController.SEND_ID_ONCE_KEY) else { return }
     
-        konfService.register(
-            onComplete: { (succ) in
-            userDefaults.set(succ, forKey: SessionsViewController.SEND_ID_ONCE_KEY)
-            return KUnit
-        }, onError: { (error) -> KSFStdlibUnit in return KUnit })
+    override func viewWillAppear(_ animated: Bool) {
+        self.updateTableContent()
     }
 
     @IBAction func refreshSessions(_ sender: Any) {
-        konfService.refresh(onComplete: {
+        konfService.refresh().then { (result) -> KSFStdlibUnit in
             self.pullToRefresh?.endRefreshing()
-            self.updateResults()
-            self.registerUuidIfNeeded()
+            self.updateTableContent()
             return KUnit
-        }, onError: { (error) -> KSFStdlibUnit in
+        }.catch { (error) -> KSFStdlibUnit in
+            self.showPopupText(title: "Failed to refresh")
             return KUnit
-        })
+        }
     }
 
     private func refreshFavorites() {
-        konfService.refreshFavorites(onComplete: {
+        konfService.refresh().then { (result) -> KSFStdlibUnit in
             if (self.mode == .favorites) {
-                self.updateResults()
+                self.updateTableContent()
             }
             return KUnit
-        }, onError: { (error) -> KSFStdlibUnit in
+        }.catch { (error) -> KSFStdlibUnit in
             return KUnit
-        })
+        }
     }
 
     private func refreshVotes() {
-        konfService.refreshVotes(
-            onComplete: { return KUnit },
-            onError: { (error) -> KSFStdlibUnit in return KUnit }
-        )
+        konfService.refresh()
     }
     
     /**
      * Prepare TableView state
      */
     
-    private func updateResults() {
+    private func updateTableContent() {
         switch self.mode {
         case .all:
             fillDataWith(sessions: konfService.sessions)

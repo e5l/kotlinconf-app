@@ -1,17 +1,13 @@
 package org.jetbrains.kotlinconf.ui
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import org.jetbrains.kotlinconf.KotlinConfApplication
-import org.jetbrains.kotlinconf.SessionModel
-import org.jetbrains.kotlinconf.model.KotlinConfDataRepository
-import org.jetbrains.anko.AnkoLogger
+import android.app.*
+import android.arch.lifecycle.*
+import org.jetbrains.anko.*
+import org.jetbrains.kotlinconf.*
+import org.jetbrains.kotlinconf.model.*
 
 class SessionListViewModel(app: Application) : AndroidViewModel(app), AnkoLogger {
-    private val repository: KotlinConfDataRepository =
-            getApplication<KotlinConfApplication>().repository
+    private val repository: KotlinConfDataRepository = getApplication<KotlinConfApplication>().repository
 
     private lateinit var navigationManager: NavigationManager
 

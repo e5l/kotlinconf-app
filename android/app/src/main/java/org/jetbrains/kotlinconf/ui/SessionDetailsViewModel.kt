@@ -1,19 +1,14 @@
 package org.jetbrains.kotlinconf.ui
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.MutableLiveData
-import org.jetbrains.kotlinconf.KotlinConfApplication
-import org.jetbrains.kotlinconf.SessionModel
-import org.jetbrains.kotlinconf.model.KotlinConfDataRepository
-import org.jetbrains.kotlinconf.data.SessionRating
-import org.jetbrains.anko.AnkoLogger
+import android.app.*
+import android.arch.lifecycle.*
+import org.jetbrains.anko.*
+import org.jetbrains.kotlinconf.*
+import org.jetbrains.kotlinconf.data.*
+import org.jetbrains.kotlinconf.model.*
 
 class SessionDetailsViewModel(app: Application): AndroidViewModel(app), AnkoLogger {
-    private val repository: KotlinConfDataRepository =
-            getApplication<KotlinConfApplication>().repository
+    private val repository: KotlinConfDataRepository = getApplication<KotlinConfApplication>().repository
 
     private val _session: MutableLiveData<SessionModel> = MutableLiveData()
     val session: LiveData<SessionModel> = _session
@@ -40,15 +35,16 @@ class SessionDetailsViewModel(app: Application): AndroidViewModel(app), AnkoLogg
 
     suspend fun toggleFavorite() {
         val isFavorite = !(isFavorite.value ?: false)
-        _session.value?.id?.let { repository.setFavorite(it, isFavorite) }
+
+        _session.value?.let { repository.toggleFavorite(it, isFavorite) }
     }
 
     suspend fun setRating(rating: SessionRating) {
-        _session.value?.id?.let { sessionId -> repository.addRating(sessionId, rating) }
+        _session.value?.let { repository.addRating(it, rating) }
     }
 
     suspend fun removeRating() {
-        _session.value?.id?.let { sessionId -> repository.removeRating(sessionId) }
+        _session.value?.let { repository.removeRating(it) }
     }
 
     fun setSession(sessionId: String) {

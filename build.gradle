@@ -1,7 +1,6 @@
 allprojects {
     buildscript {
         repositories {
-            mavenLocal()
             maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
             maven { url 'https://dl.bintray.com/kotlin/ktor' }
             maven { url 'https://kotlin.bintray.com/kotlinx' }
@@ -21,6 +20,5 @@ allprojects {
         maven { url 'https://kotlin.bintray.com/kotlinx' }
         maven { url 'https://maven.google.com' }
         jcenter()
-        mavenLocal()
     }
 }

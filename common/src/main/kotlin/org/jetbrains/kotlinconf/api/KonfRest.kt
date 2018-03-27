@@ -8,7 +8,7 @@ import kotlinx.serialization.json.*
 private val END_POINT = "api.kotlinconf.com"
 private typealias Config = HttpRequestBuilder.() -> Unit
 
-class KonfRest(private val userId: String) {
+internal class KonfRest(private val userId: String) {
 
     suspend fun getAll(): AllData =
             JSON.parse(AllData.serializer(), get("all", {}).withCheck().body)

@@ -20,15 +20,15 @@ konanArtifacts {
 
         target('ios_arm64') {
             libraries {
-                klib 'serialization_ios_arm64'
-                klib 'http_client_native_ios_arm64'
+                file "$rootDir/klibs/serialization_ios_arm64.klib"
+                file "$rootDir/klibs/http_client_native_ios_arm64.klib"
             }
         }
 
         target('ios_x64') {
             libraries {
-                klib 'serialization_ios_x64'
-                klib 'http_client_native_ios_x64'
+                file "$rootDir/klibs/serialization_ios_x64.klib"
+                file "$rootDir/klibs/http_client_native_ios_x64.klib"
             }
         }
     }

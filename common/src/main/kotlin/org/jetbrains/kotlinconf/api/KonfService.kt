@@ -8,7 +8,8 @@ import kotlin.*
 class KonfService(private val uuid: String) {
     private val api = KonfRest(uuid)
 
-    private var data = AllData()
+    var data = AllData()
+        private set
 
     var favorites: MutableList<Favorite> = mutableListOf()
         private set
@@ -21,47 +22,25 @@ class KonfService(private val uuid: String) {
     var sessionsModels: Map<String, SessionModel> = mapOf()
         private set
 
-    init {
-        register(onComplete = {
-            refresh()
-        })
+    fun register(): KonfPromise<Boolean> = konfAsync {
+        KonfRest.createUser(uuid)
     }
 
-    fun register(onComplete: (result: Boolean) -> Unit = {}, onError: (cause: Throwable) -> Unit = {}) = konfAsync {
-        val result = KonfRest.createUser(uuid)
-        println("created $uuid")
-        result
-    }.then(onComplete).catch(onError)
-
-    fun refresh(onComplete: () -> Unit = {}, onError: (cause: Throwable) -> Unit = {}) = konfAsync {
+    fun refresh(): KonfPromise<Unit> = konfAsync {
         data = api.getAll()
         syncState()
-    }.then { onComplete() }.catch(onError)
-
-    fun refreshFavorites(onComplete: () -> Unit = {}, onError: (cause: Throwable) -> Unit = {}): Unit =
-            refresh(onComplete, onError)
-
-    fun refreshVotes(onComplete: () -> Unit = {}, onError: (cause: Throwable) -> Unit = {}) =
-            refresh(onComplete, onError)
+    }
 
     fun isFavorite(session: Session) = getFavorite(session) != null
 
-    fun toggleFavorite(
-            session: Session,
-            onComplete: (Boolean) -> Unit = {},
-            onError: (cause: Throwable) -> Unit = {}
-    ) {
+    fun toggleFavorite(session: Session): KonfPromise<Boolean> {
         val newFavorite = !isFavorite(session)
         setFavoriteState(session, isFavorite = newFavorite)
-        onComplete(newFavorite)
 
-        konfAsync {
+        return konfAsync {
             val favorite = Favorite(session.id)
-            try {
-                if (newFavorite) api.postFavorite(favorite) else api.deleteFavorite(favorite)
-            } catch (cause: Throwable) {
-                onError(cause)
-            }
+            if (newFavorite) api.postFavorite(favorite) else api.deleteFavorite(favorite)
+            return@konfAsync newFavorite
         }
     }
 
@@ -87,14 +66,12 @@ class KonfService(private val uuid: String) {
 
     fun setRating(
             session: Session,
-            rating: SessionRating,
-            onError: (Throwable) -> Unit = {},
-            onComplete: (SessionRating?) -> Unit = {}
-    ) {
+            rating: SessionRating
+    ): KonfPromise<SessionRating?> {
         val currentRating = getRating(session)
         val newRating = if (currentRating == rating) null else rating
 
-        konfAsync {
+        return konfAsync {
             try {
                 val vote = Vote(session.id, rating.value)
                 if (newRating != null) api.postVote(vote) else api.deleteVote(vote)
@@ -103,14 +80,17 @@ class KonfService(private val uuid: String) {
                 return@konfAsync newRating
             } catch (cause: ApiException) {
                 val code = VoteActionResult.fromCode(cause.response.statusCode)
-                println("CODE: $code")
                 when (code) {
                     VoteActionResult.TOO_EARLY -> throw EARLY_SUBMITTION_ERROR
                     VoteActionResult.TOO_LATE -> throw LATE_SUBMITTION_ERROR
                     else -> throw cause
                 }
             }
-        }.then(onComplete).catch(onError)
+        }
+    }
+
+    fun deleteRating(session: Session): KonfPromise<Unit> = konfAsync {
+        api.deleteVote(Vote(session.id))
     }
 
     private fun getFavorite(session: Session): Favorite? =

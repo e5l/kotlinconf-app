@@ -11,7 +11,8 @@ class SessionModel(
         var startsAt: Date,
         var endsAt: Date,
         val room: String?,
-        var speakers: Array<Speaker>
+        var speakers: Array<Speaker>,
+        val origin: Session
 ) {
     companion object {
         fun forSession(all: AllData, sessionId: String): SessionModel? {
@@ -47,7 +48,8 @@ class SessionModel(
                     endsAt = endsAt,
                     speakers = (briefSession.speakers
                             ?: emptyList()).filterNotNull().mapNotNull { speakerProvider(it) }.toTypedArray(),
-                    room = briefSession.roomId?.let(roomProvider)?.name
+                    room = briefSession.roomId?.let(roomProvider)?.name,
+                    origin = briefSession
             )
         }
     }
