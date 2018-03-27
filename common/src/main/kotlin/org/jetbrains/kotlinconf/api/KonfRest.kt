@@ -59,6 +59,7 @@ internal class KonfRest(private val userId: String) {
 
     private fun HttpRequestBuilder.setupDefault() {
         headers["Authorization"] = listOf("Bearer $userId")
+        headers["Connection"] = listOf("close")
         url.protocol = URLProtocol.HTTPS
         url.host = END_POINT
         url.port = 443
@@ -83,7 +84,9 @@ internal class KonfRest(private val userId: String) {
 }
 
 private fun HttpResponse.withCheck(): HttpResponse {
-    if (!isSuccess()) throw ApiException(this)
+    if (!isSuccess()) {
+        throw ApiException(this)
+    }
     return this
 }
 
